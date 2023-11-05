@@ -1,0 +1,922 @@
+;;Classes
+    Any
+        .Base => Prototype                                                                          ; Retrieves the value's base object.
+        .GetMethod([Name, ParamCount]) => Func                                                      ; Retrieves the implementation function of a method.
+        .HasBase(BaseObj) => Integer                                                                ; Returns true if the specified base object is in the value's chain of base objects.
+        .HasMethod([Name, ParamCount]) => Integer                                                   ; Returns true if the value has a method by this name.
+        .HasProp(Name) => Integer                                                                   ; Returns true if the value has a property by this name.
+        Object => Object
+            Call() => Object                                                                        ; Creates a new Object when Object() is called.
+            .Base => Prototype                                                                      ; Retrieves or sets an object's base object.
+            .Clone() => Object                                                                      ; Returns a shallow copy of an object.
+            .DefineProp(Name, Descriptor) => Object                                                 ; Defines a new own property.
+            .DeleteProp(Name) => Any                                                                ; Removes an own property from an object.
+            .GetOwnPropDesc(Name) => Object                                                         ; Returns a descriptor for a given own property, compatible with DefineProp.
+            .HasOwnProp(Name) => Integer                                                            ; Returns 1 (true) if an object owns a property by the specified name.
+            .OwnProps() => Enumerator                                                               ; Enumerates an object's own properties.
+            Array => Array
+                Call([Val1 , Val2, ..., ValN]) => Array                                             ; Creates a new Array containing any specified items when Array() is called.
+                .Length => Integer                                                                  ; Retrieves or sets the length of an array.
+                .Capacity => Integer                                                                ; Retrieves or sets the current capacity of an array.
+                .Default => Any                                                                     ; Defines the default value returned when an element with no value is requested.
+                .__Item => Any                                                                      ; Retrieves or sets the value of an array element.
+                .Clone() => Array                                                                   ; Returns a shallow copy of an array.
+                .Delete(Index) => Any                                                               ; Removes the value of an array element, leaving the index without a value.
+                .Get(Index) => Any                                                                  ; Returns the value at a given index, or a default value.
+                .Has(Index) => Integer                                                              ; Returns a non-zero number if the index is valid and there is a value at that position.
+                .InsertAt(Index, Val1 [, Val2, ..., ValN]) => EmptyString                           ; Inserts one or more values at a given position.
+                .Pop() =>  Integer                                                                  ; Removes and returns the last array element.
+                .Push() => EmptyString                                                              ; Appends values to the end of an array.
+                .RemoveAt(Index [, Length]) => Any                                                  ; Remove and return item at the specified index.
+                .__New([Val1, Val2, ..., ValN]) => EmptyString                                      ; Appends items. Equivalent to Push. Exists to support Call, and is not intended to be called directly.
+                .__Enum() => Enumerator                                                             ; Enumerates array elements.
+            Buffer => Buffer
+                Call([ByteCount, FillByte])                                                         ; Allocates or reallocates the buffer and optionally fills it.
+                .Ptr                                                                                ; Retrieves the buffer's current memory address.
+                .Size                                                                               ; Retrieves or sets the buffer's size, in bytes.
+                .__New([ByteCount, FillByte])                                                       ; Allocates or reallocates the buffer and optionally fills it.
+                ClipboardAll => Buffer
+            Class => Class
+                Call(Params*) => ClassInstance                                                      ; Constructs a new instance of the class.
+                .Prototype => Prototype                                                             ; Retrieves or sets the object on which all instances of the class are based.
+            Error => Error
+                Call(Message [, What, Extra]) => Error                                              ; Creates an Error object
+                .Message => String                                                                  ; An error message.
+                .What => String                                                                     ; What threw the exception. This is usually the name of a function, but is blank for exceptions thrown due to an error in an expression (such as using a math operator on a non-numeric value).
+                .Extra => String                                                                    ; A string value relating to the error, if available. If this value can be converted to a non-empty string, the standard error dialog displays a line with "Specifically:" followed by this string.
+                .File => String                                                                     ; The full path of the script file which contains the line at which the error occurred, or at which the Error object was constructed.
+                .Line => Integer                                                                    ; The line number at which the error occurred, or at which the Error object was constructed.
+                .Stack => String                                                                    ; A string representing the call stack at the time the Error object was constructed. Each line may be formatted as follows:
+                MemoryError => Error                                                                ; A memory allocation failed.
+                OSError => Error                                                                    ; An internal function call to a Win32 function failed. Message includes an error code and description generated by the operating system. OSErrors have an additional Number property which contains the error code. Calling OSError(Code) where Code is numeric sets Number and Message based on the given OS-defined error code. If Code is omitted, it defaults to A_LastError. For example, OSError(5).Message returns "(5) Access is denied."
+                TargetError => Error                                                                ; A function failed because its target could not be found. Message indicates what kind of target, such as a window, control, menu or status bar.
+                TimeoutError => Error                                                               ; SendMessage timed out.
+                TypeError => Error                                                                  ; An unexpected type of value was used as input for a function, property assignment, or some other operation. Usually Message indicates the expected and actual type, and Extra contains a string representing the errant value.
+                UnsetError => Error                                                                 ; An attempt was made to read or access something that was never set.
+                    MemberError => Error                                                            ; An attempt was made to call a method or read a property value that doesn't exist.
+                        PropertyError => Error                                                      ; An attempt was made to read a property value that doesn't exist.
+                        MethodError => Error                                                        ; An attempt was made to call a method that doesn't exist.
+                    UnsetItemError => Error                                                         ; An attempt was made to access an item that doesn't exist.
+                ValueError => Error                                                                 ; An unexpected value was used as input for a function, property assignment, or some other operation. Usually Message indicates which expectation was broken, and Extra contains a string representing the errant value.
+                    IndexError => Error                                                             ; The index parameter of an object's __Item property was invalid or out of range.
+                ZeroDivisionError => Error                                                          ; Division by zero was attempted in an expression or with the Mod function.
+            File
+                .Pos => Integer                                                                     ; Retrieves or sets the position of the file pointer.
+                .Length => Integer                                                                  ; Retrieves or sets the size of the file.
+                .AtEOF => Integer                                                                   ; Retrieves a non-zero number if the file pointer has reached the end of the file.
+                .Encoding => String                                                                 ; Retrieves or sets the text encoding used by this file object.
+                .Handle => Integer                                                                  ; Retrieves a system file handle, intended for use with DllCall.
+                .Read([Characters]) => String                                                       ; Reads a string of characters from the file and advances the file pointer.
+                .Write(String) => Integer                                                           ; Writes a string of characters to the file and advances the file pointer.
+                .ReadLine() => String                                                               ; Reads a line of text from the file and advances the file pointer.
+                .WriteLine([String]) => Integer                                                     ; Writes a line of text to the file and advances the file pointer.
+                .ReadUInt() => Integer                                                              ; Reads a 32-bit unsigned integer from the file and advances the file pointer.
+                .ReadInt() => Integer                                                               ; Reads a 32-bit signed integer from the file and advances the file pointer.
+                .ReadInt64() => Integer                                                             ; Reads a 64-bit integer from the file and advances the file pointer.
+                .ReadShort() => Integer                                                             ; Reads a 16-bit signed integer from the file and advances the file pointer.
+                .ReadUShort() => Integer                                                            ; Reads a 16-bit unsigned integer from the file and advances the file pointer.
+                .ReadChar() => Integer                                                              ; Reads an 8-bit signed from the file and advances the file pointer.
+                .ReadUChar() => Integer                                                             ; Reads an 8-bit unsigned integer from the file and advances the file pointer.
+                .ReadDouble() => Float                                                              ; Reads a 64-bit floating point number from the file and advances the file pointer.
+                .ReadFloat() => Float                                                               ; Reads a 32-bit floating point number from the file and advances the file pointer.
+                .WriteUInt(Num) => Integer                                                          ; Writes a 32-bit unsigned integer to the file and advances the file pointer.
+                .WriteInt(Num) => Integer                                                           ; Writes a 32-bit signed integer to the file and advances the file pointer.
+                .WriteInt64(Num) => Integer                                                         ; Writes a 64-bit integer to the file and advances the file pointer.
+                .WriteShort(Num) => Integer                                                         ; Writes a 16-bit signed integer to the file and advances the file pointer.
+                .WriteUShort(Num) => Integer                                                        ; Writes a 16-bit unsigned integer to the file and advances the file pointer.
+                .WriteChar(Num) => Integer                                                          ; Writes an 8-bit signed to the file and advances the file pointer.
+                .WriteUChar(Num) => Integer                                                         ; Writes an 8-bit unsigned integer to the file and advances the file pointer.
+                .WriteDouble(Num) => Integer                                                        ; Writes a 64-bit floating point number to the file and advances the file pointer.
+                .WriteFloat(Num) => Integer                                                         ; Writes a 32-bit floating point number to the file and advances the file pointer.
+                .RawRead(Buffer [, Bytes]) => Integer                                               ; Reads raw binary data from the file into memory and advances the file pointer.
+                .RawWrite(Data [, Bytes]) => Integer                                                ; Writes raw binary data to the file and advances the file pointer.
+                .Seek(Distance [, Origin]) => Integer                                               ; Moves the file pointer.
+                .Close() => EmptyString                                                             ; Closes the file, flushes any data in the cache to disk and releases the share locks.
+            Func
+                .Name => String                                                                     ; Returns the function's name.
+                .IsBuiltIn => Integer                                                               ; Returns 1 (true) if the function is built-in, otherwise 0 (false).
+                .IsVariadic => Integer                                                              ; Returns 1 (true) if the function is variadic, otherwise 0 (false).
+                .MinParams => Integer                                                               ; Returns the number of required parameters.
+                .MaxParams => Integer                                                               ; Returns the number of formally-declared parameters for a user-defined function or maximum parameters for a built-in function.
+                .Call(Param1, ..., ParamN*) => Any                                                  ; Calls the function.
+                .Bind(Param1, ..., ParamN*) => BoundFunc                                            ; Binds parameters to the function.
+                .IsByRef([ParamIndex]) => Integer                                                   ; Determines whether a parameter is ByRef.
+                .IsOptional([ParamIndex]) => Integer                                                ; Determines whether a parameter is optional.
+                BoundFunc
+                Closure
+                Enumerator
+                    .Call() => Integer                                                              ; Retrieves the next item or items in an enumeration.
+            Gui => Gui
+                Call([Options, Title, EventObj]) => Gui                                             ; Creates a new window.
+                .BackColor => Integer                                                               ; Retrieves or sets the background color of the window.
+                .FocusedCtrl => Gui.Control                                                         ; Retrieves the GuiControl object of the window's focused control.
+                .Hwnd => Integer                                                                    ; Retrieves the window handle (HWND) of the window.
+                .MarginX => Integer                                                                 ; Retrieves or sets the size of horizontal margins between sides and subsequently created controls.
+                .MarginY => Integer                                                                 ; Retrieves or sets the size of vertical margins between sides and subsequently created controls.
+                .MenuBar => MenuBar                                                                 ; Retrieves or sets the window's menu bar.
+                .Name => String                                                                     ; Retrieves or sets a custom name for the window.
+                .Title => String                                                                    ; Retrieves or sets the window's title.
+                .__Item => Gui.Control                                                              ; Retrieves the GuiControl object associated with the specified name, text, ClassNN or HWND.
+                .Add(ControlType, [Options, Text]) => Gui.Control                                   ; Creates a new control and adds it to the window.
+                .AddActiveX([Options, CompontnetName]) => Gui.ActiveX                               ; Creates a new ActiveX control.
+                .AddButton([Options, Label]) => Gui.Button                                          ; Creates a new Button control.
+                .AddCheckBox([Options, Label]) => Gui.CheckBox                                      ; Creates a new CheckBox control.
+                .AddComboBox([Options, ArrayOfItems]) => Gui.ComboBox                               ; Creates a new ComboBox control.
+                .AddCustom([Options, Param2]) => Gui.Custom                                         ; Creates a new Custom control.
+                .AddDateTime([Options, DateFormat]) => Gui.DateTime                                 ; Creates a new DateTime control.
+                .AddDropDownList([Options, ArrayOfItems]) => Gui.DDL                                ; Creates a new DropDownList control.
+                .AddDDL([Options, ArrayOfItems]) => Gui.DDL                                         ; Creates a new DropDownList control.
+                .AddEdit([Options, Text]) => Gui.Edit                                               ; Creates a new Edit control.
+                .AddGroupBox([Options, Label]) => Gui.GroupBox                                      ; Creates a new GroupBox control.
+                .AddHotkey([Options, HotkeyText]) => Gui.Hotkey                                     ; Creates a new Hotkey control.
+                .AddLink([Options, Text]) => Gui.Link                                               ; Creates a new Link control.
+                .AddListBox([Options, ArrayOfItems]) => Gui.ListBox                                 ; Creates a new ListBox control.
+                .AddListView([Options, ArrayOfColTitles]) => Gui.ListView                           ; Creates a new ListView control.
+                .AddMonthCal([Options, Date]) => Gui.MonthCal                                       ; Creates a new MonthCal control.
+                .AddPicture([Options, ImgPath]) => Gui.Pic                                          ; Creates a new Picture control.
+                .AddPic([Options, ImgPath]) => Gui.Pic                                              ; Creates a new Picture control.
+                .AddProgress([Options, Text]) => Gui.Progress                                       ; Creates a new Progress control.
+                .AddRadio([Options, Text]) => Gui.Radio                                             ; Creates a new Radio control.
+                .AddSlider([Options, Text]) => Gui.Slider                                           ; Creates a new Slider control.
+                .AddStatusBar([Options, Text]) => Gui.                                              ; Creates a new StatusBar control.
+                .AddTab([Options, Text]) => Gui.Tab                                                 ; Creates a new Tab control.
+                .AddTab2([Options, Text]) => Gui.Tab                                                ; Creates a new Tab2 control.
+                .AddTab3([Options, Text]) => Gui.Tab                                                ; Creates a new Tab3 control.
+                .AddText([Options, Text]) => Gui.Text                                               ; Creates a new Text control.
+                .AddTreeView([Options, Text]) => Gui.TreeView                                       ; Creates a new TreeView control.
+                .AddUpDown([Options, Text]) => Gui.UpDown                                           ; Creates a new UpDown control.
+                .Destroy() => EmptyString                                                           ; Deletes the window.
+                .Flash([Blink]) => EmptyString                                                      ; Blinks the window and its taskbar button.
+                .GetClientPos([&X, &Y, &Width, &Height]) => EmptyString                             ; Retrieves the position and size of the window's client area.
+                .GetPos([&X, &Y, &Width, &Height]) => EmptyString                                   ; Retrieves the position and size of the window.
+                .Hide() => EmptyString                                                              ; Hides the window.
+                .Maximize() => EmptyString                                                          ; Unhides and maximizes the window.
+                .Minimize() => EmptyString                                                          ; Unhides and minimizes the window.
+                .Move([&X, &Y, &Width, &Height]) => EmptyString                                     ; Moves and/or resizes the window.
+                .OnEvent(EventName, Callback [, AddRemove]) => EmptyString                          ; Registers a function or method to be called when the given event is raised.
+                .Opt(Options) => EmptyString                                                        ; Sets various options and styles for the appearance and behavior of the window.
+                .Restore() => EmptyString                                                           ; Unhides and unminimizes or unmaximizes the window.
+                .SetFont([Options, FontName]) => EmptyString                                        ; Sets the typeface, size, style, and text color for subsequently created controls.
+                .Show(Options) => EmptyString                                                       ; Displays the window. It can also minimize, maximize, or move the window.
+                .Submit([Hide]) => Object                                                           ; Collects the values from named controls and composes them into an Object. Optionally hides the window.
+                .__Enum() => Enumerator                                                             ; Enumerates the window's controls.
+                .__New([Options, Title, EventObj]) => Gui                                           ; Constructs a new Gui instance.
+
+            Gui.Control
+                .Focus() => EmptyString                                                             ; Sets keyboard focus to the control.
+                .GetPos([&X, &Y, &Width, &Height]) => EmptyString                                   ; Retrieves the position and size of the control.
+                .Move([&X, &Y, &Width, &Height]) => EmptyString                                     ; Moves and/or resizes the control.
+                .OnCommand(NotifyCode, Callback [, AddRemove]) => EmptyString                       ; Registers a function or method to be called on WM_COMMAND.
+                .OnEvent(EventName, Callback [, AddRemove]) => EmptyString                          ; Registers a function or method to be called when the given event is raised.
+                .OnNotify(NotifyCode, Callback [, AddRemove]) => EmptyString                        ; Registers a function or method to be called on WM_NOTIFY.
+                .Opt(Options) => EmptyString                                                        ; Sets various options and styles for the appearance and behavior of the control.
+                .Redraw() => EmptyString                                                            ; Redraws the region of the GUI window occupied by the control.
+                .SetFont([Options, FontName]) => EmptyString                                        ; Sets the font typeface, size, style, and/or color for the control.
+                
+                .ClassNN => String                                                                  ; Retrieves the class name and sequence number (ClassNN) of the control.
+                .Enabled => Integer                                                                 ; Retrieves or sets the interaction state of the control.
+                .Focused => Integer                                                                 ; Retrieves the focus state of the control.
+                .Gui => Gui                                                                         ; Retrieves the Gui object of the control's parent window.
+                .Hwnd => Integer                                                                    ; Retrieves the window handle (HWND) of the control.
+                .Name => String                                                                     ; Retrieves or sets the explicit name of the control.
+                .Type => String                                                                     ; Retrieves the type of the control.
+                .Value => String                                                                    ; Retrieves or sets the contents of a value-capable control.
+                .Visible => Integer                                                                 ; Retrieves or sets the visibility state of the control.
+                Gui.ActiveX
+                    .Text => String                                                                 ; Retrieves or sets the text/caption of the control.
+                    .Value => String                                                                ; The ActiveX object of the control.
+                Gui.Button
+                    .Text => String                                                                 ; Retrieves or sets the text/caption of the control.
+                Gui.CheckBox
+                    .Text => String                                                                 ; Retrieves or sets the text/caption of the control.
+                    .Value => String                                                                ; Retrieves or sets the checked status of the control.
+                Gui.Custom
+                Gui.DateTime
+                    .Text => String                                                                 ; The formatted text displayed by the DateTime control.
+                    .Value => String                                                                ; Retrieves or sets the date-time stamp of the control.
+                    .SetFormat([Format]) => EmptyString
+                Gui.Edit
+                    .Text => String                                                                 ; Retrieves or sets the text of the control.
+                    .Value => String                                                                ; Retrieves or sets the contents of the control.
+                Gui.GroupBox
+                    .Text => String                                                                 ; Retrieves or sets the text/caption of the control.
+                Gui.Hotkey
+                Gui.Link
+                    .Text => String                                                                 ; Retrieves or sets the text/caption of the control.
+                Gui.List
+                    .Add(ArrayOfItems) => EmptyString                                               ; Appends items to a multi-item control.
+                    .Choose(Value) => EmptyString                                                   ; Selects an item in a multi-item control.
+                    .Delete([Value]) => EmptyString                                                 ; Deletes one or all items from a multi-item control.
+                    .Text => String                                                                 ; The text of the currently selected item/tab of the DropDownList, ComboBox, ListBox or Tab control.
+                    .Value => String                                                                ; Retrieves or sets the selected item number of the control.
+                    Gui.ComboBox
+                    Gui.DDL
+                    Gui.ListBox
+                    Gui.Tab
+                        .UseTab([Value, ExactMatch]) => EmptyString                                 ; Specifies the tab to which subsequently created controls will be added.
+                Gui.ListView
+                Gui.MonthCal
+                Gui.Pic
+                    .Value => String                                                                ; Retrieves or sets the path of the image.
+                Gui.Progress
+                Gui.Radio
+                    .Text => String                                                                 ; Retrieves or sets the text/caption of the control.
+                    .Value => String                                                                ; Retrieves or sets the checked status of the control.
+                Gui.Slider
+                Gui.StatusBar
+                    .Text => String                                                                 ; Retrieves or sets the text of the first control section.
+                    .SetText(NewText [, PartNumber, Style]) => EmptyString                          ; Displays NewText in the specified part of the status bar.
+                    .SetParts([Width1, Width2, ..., Width255]) => Integer                           ; Divides the bar into multiple sections according to the specified widths (in pixels).
+                    .SetIcon(FileName [, IconNumber, PartNumber]) => Integer                        ; Sets the icon to be displayed next to a menu item.
+                Gui.Text
+                    .Text => String                                                                 ; Retrieves or sets the text/caption of the control.
+                Gui.TreeView
+                Gui.UpDown
+            InputHook => InputHook
+                Call([Options, EndKeys, MatchList]) => InputHook                                    ; Creates an object which can be used to collect or intercept keyboard input.
+                .EndKey => String                                                                   ; Returns the name of the end key which was pressed to terminate the Input.
+                .EndMods => String                                                                  ; Returns a string of the modifiers which were logically down when Input was terminated.
+                .EndReason => String                                                                ; Returns an EndReason string indicating how Input was terminated.
+                .InProgress => Integer                                                              ; Returns 1 (true) if the Input is in progress, otherwise 0 (false).
+                .Input => String                                                                    ; Returns any text collected since the last time Input was started.
+                .Match => String                                                                    ; Returns the MatchList item which caused the Input to terminate.
+                .OnEnd => Func                                                                      ; Retrieves or sets the function object which is called when Input is terminated.
+                .OnChar => Func                                                                     ; Retrieves or sets the function object which is called after a character is added to the input buffer.
+                .OnKeyDown => Func                                                                  ; Retrieves or sets the function object which is called when a notification-enabled key is pressed.
+                .OnKeyUp => Func                                                                    ; Retrieves or sets the function object which is called when a notification-enabled key is released.
+                .BackspaceIsUndo => Integer                                                         ; Controls whether the Backspace key removes the most recently pressed character from the end of the Input buffer.
+                .CaseSensitive => Integer                                                           ; Controls whether MatchList is case-sensitive.
+                .FindAnywhere => Integer                                                            ; Controls whether each match can be a substring of the input text.
+                .MinSendLevel => Integer                                                            ; Retrieves or sets the minimum send level of input to collect.
+                .NotifyNonText => Integer                                                           ; Controls whether the OnKeyDown and OnKeyUp callbacks are called whenever a non-text key is pressed.
+                .Timeout => Number                                                                  ; Retrieves or sets the timeout value in seconds.
+                .VisibleNonText => Integer                                                          ; Controls whether keys or key combinations which do not produce text are visible (not blocked).
+                .VisibleText => Integer                                                             ; Controls whether keys or key combinations which produce text are visible (not blocked).
+                .KeyOpt(Keys, KeyOptions) => EmptyString                                            ; Sets options for a key or list of keys.
+                .Start() => EmptyString                                                             ; Starts collecting input.
+                .Stop() => EmptyString                                                              ; Terminates the Input and sets EndReason to the word Stopped.
+                .Wait([MaxTime]) => String                                                          ; Waits until the Input is terminated (InProgress is false).
+            Map => Map
+                Call([Key1, Value1, ..., ..., KeyN, ValueN]) => Map                                 ; Creates a Map object and sets items.
+                .Count => Integer                                                                   ; Retrieves the number of key-value pairs present in a map.
+                .Capacity => Integer                                                                ; Retrieves or sets the current capacity of a map.
+                .CaseSense => Integer                                                               ; Retrieves or sets a map's case sensitivity setting.
+                .Default => Any                                                                     ; Defines the default value returned when a key is not found.
+                .__Item => Any                                                                      ; Retrieves or sets the value of a key-value pair.
+                .Clear() => EmptyString                                                             ; Removes all key-value pairs from a map.
+                .Clone() => Map                                                                     ; Returns a shallow copy of a map.
+                .Delete(Key) => Any                                                                 ; Removes a key-value pair from a map.
+                .Get(Key [, Default]) => Any                                                        ; Returns the value associated with a key, or a default value.
+                .Has(Key) => Integer                                                                ; Returns true if the specified key has an associated value within a map.
+                .Set([Key1, Value1, ..., ..., KeyN, ValueN]) => Map                                 ; Sets zero or more items.
+                .__Enum() => Enumerator                                                             ; Enumerates key-value pairs.
+                .__New([Key1, Value1, ..., ..., KeyN, ValueN]) => Map                               ; Sets items. Equivalent to Set.
+            Menu => Menu
+                Call() => Menu                                                                      ; Creates a new Menu object.
+                .Add([MenuItemName, CallbackOrSubmenu, Options]) => EmptyString                     ; Adds or modifies a menu item.
+                .AddStandard() => EmptyString                                                       ; Adds the standard tray menu items.
+                .Check(MenuItemName) => EmptyString                                                 ; Adds a visible checkmark next to a menu item.
+                .Delete([MenuItemName]) => EmptyString                                              ; Deletes one or all menu items.
+                .Disable(MenuItemName) => EmptyString                                               ; Grays out a menu item to indicate that the user cannot select it.
+                .Enable(MenuItemName) => EmptyString                                                ; Allows the user to once again select a menu item if was previously disabled (grayed out).
+                .Insert([MenuItemName, ItemToInsert, CallbackOrSubmenu, Options]) => EmptyString    ; Inserts a new item before the specified item.
+                .Rename(MenuItemName [, NewName]) => EmptyString                                    ; Renames a menu item.
+                .SetColor([ColorValue, ApplyToSubmenus]) => EmptyString                             ; Changes the background color of the menu.
+                .SetIcon(MenuItemName, FileName [, IconNumber, IconWidth]) => EmptyString           ; Sets the icon to be displayed next to a menu item.
+                .Show([X, Y]) => EmptyString                                                        ; Displays the menu.
+                .ToggleCheck(MenuItemName) => EmptyString                                           ; Toggles the checkmark next to a menu item.
+                .ToggleEnable(MenuItemName) => EmptyString                                          ; Enables or disables a menu item.
+                .Uncheck(MenuItemName) => EmptyString                                               ; Removes the checkmark (if there is one) from a menu item.
+                .ClickCount => Integer                                                              ; Retrieves or sets how many times the tray icon must be clicked to select its default menu item.
+                .Default => String                                                                  ; Retrieves or sets the default menu item.
+                .Handle => Integer                                                                  ; Retrieves the menu's Win32 handle.
+                MenuBar  => MenuBar
+                    Call() => MenuBar                                                               ; Creates a new Menu object.
+            RegExMatchInfo
+                .Count => Integer                                                                   ; Returns the overall number of subpatterns (capturing groups), which is also the maximum value for N.
+                .Len => Integer                                                                     ; Returns the length of the overall match.
+                .Len[N] => Integer                                                                  ; Returns the length of a captured subpattern.
+                .Mark => Integer                                                                    ; Returns the NAME of the last encountered (*MARK:NAME), when applicable.
+                .Match[]                                                                            ; Returns the overall match.
+                .Match[N]                                                                           ; Returns a captured subpattern.
+                .Name[N] => String                                                                  ; Returns the name of the given subpattern, if it has one.
+                .Pos => Integer                                                                     ; Returns the position of the overall match.
+                .Pos[N]                                                                             ; Returns the position of a captured subpattern.
+                .Name(N) => String                                                                  ; Returns the name of the given subpattern, if it has one.
+                .Len(N) => Integer                                                                  ; Returns the length of a captured subpattern.
+                .Pos(N) => Integer                                                                  ; Returns the position of a captured subpattern.
+        Primitive
+            Number => Number
+                Call(String) => Number                                                              ; Converts a numeric string to a pure integer or floating-point number.
+                Float => Float
+                    Call(Value) => Float                                                            ; Converts a numeric string or integer value to a floating-point number.
+                Integer => Integer
+                    Call(Value) => Integer                                                          ; Converts a numeric string or float value to an integer number.
+            String => String
+                Call(Value) => String                                                               ; Converts a value to a string.
+        VarRef
+        ComValue => ComObject
+            Call(VarType, Value [, Flags]) => ComObject                                             ; Wraps a value, SafeArray or COM object for use by the script or for passing to a COM method.
+            ComObjArray => ComObjArray
+                Call(VarType, Count1 [, Count2, ..., Count8]) => ComObjArray                        ; Creates a SafeArray for use with COM.
+            ComObject => ComObject
+                Call(CLSID , IID) => ComObject                                                      ; Creates a COM object.
+            ComValueRef
+
+
+;;Functions
+    Abs(Num) => Number                                                                                                                          ; Returns the absolute value of the specified number.
+    ACos(Num) => Number                                                                                                                         ; Returns the arccosine (the number whose cosine is the specified number) in radians.
+    ASin(Num) => Number                                                                                                                         ; Returns the arcsine (the number whose sine is the specified number) in radians.
+    ATan(Num) => Number                                                                                                                         ; Returns the arctangent (the number whose tangent is the specified number) in radians.
+    BlockInput(OnOff/SendMouse/MouseMove) => Empty String                                                                                       ; Disables or enables the user's ability to interact with the computer via keyboard and mouse.
+    CallbackCreate(Function [, Options, ParamCount]) => Integer                                                                                 ; Creates a machine-code address that when called, redirects the call to a function in the script.
+    CallbackFree(Address) => EmptyString                                                                                                        ; Deletes a callback and releases its reference to the function object.
+    CaretGetPos([&OutX, &OutY]) => Integer                                                                                                      ; Retrieves the current position of the caret (text insertion point).
+    Ceil(Num) => Number                                                                                                                         ; Returns the specified number rounded up to the nearest integer (without any .00 suffix).
+    Chr(Num) => String                                                                                                                          ; Returns the string (usually a single character) corresponding to the character code indicated by the specified number.
+    Click(options) => Integer                                                                                                                   ; Clicks a mouse button at the specified coordinates. It can also hold down a mouse button, turn the mouse wheel, or move the mouse.
+    ClipWait([Timeout, WaitFor]) => Integer                                                                                                     ; Waits until the clipboard contains data.
+    ComCall(Index, ComObj [, Type1, Arg1, TypeN, ArgN, ReturnType]) => Primitive                                                                ; Calls a native COM interface method by index.
+    ComObjActive(CLSID) => ComObject                                                                                                            ; Retrieves a registered COM object.
+    ComObjConnect(ComObj [, PrefixOrSink]) => Any                                                                                               ; Connects a COM object's event source to the script, enabling events to be handled.
+    ComObjFlags(ComObj [, NewFlags, Mask]) => Integer                                                                                           ; Retrieves or changes flags which control a COM wrapper object's behaviour.
+    ComObjFromPtr(DispPtr) => ComObject                                                                                                         ; Wraps a raw IDispatch pointer (COM object) for use by the script.
+    ComObjGet(Name) => ComObject                                                                                                                ; Returns a reference to an object provided by a COM component.
+    ComObjQuery(ComObj, IID) => ComObject OR ComValue                                                                                           ; Queries a COM object for an interface. Return value type is based on IID.
+    ComObjQuery(ComObj, SID, IID) => ComObject OR ComValue                                                                                      ; Queries a COM object for a service. Return value type is based on IID.
+    ComObjType(ComObj [, InfoType]) => Primitive                                                                                                ; Retrieves type information from a COM object.
+    ComObjValue(ComObj) => Integer                                                                                                              ; Retrieves the value or pointer stored in a COM wrapper object.
+    ControlAddItem(String, Control [, WinTitle, WinText, NotInTitle, NotInText]) => Integer                                                     ; Adds the specified string as a new entry at the bottom of a ListBox or ComboBox.
+    ControlChooseIndex(N, Control [, WinTitle, WinText, NotInTitle, NotInText]) => EmptyString                                                  ; Sets the selection in a ListBox, ComboBox or Tab control to be the Nth item.
+    ControlChooseString(String, Control [, WinTitle, WinText, NotInTitle, NotInText]) => Integer                                                ; Sets the selection in a ListBox or ComboBox to be the first entry whose leading part matches the specified string.
+    ControlClick([ControlOrPos, WinTitle, WinText, Button, ClickCount, Options, NotInTitle, NotInText]) => EmptyString                          ; Sends a mouse button or mouse wheel event to a control.
+    ControlDeleteItem(N, Control [, WinTitle, WinText, NotInTitle, NotInText]) => EmptyString                                                   ; Deletes the specified entry number from a ListBox or ComboBox.
+    ControlFindItem(String, Control [, WinTitle, WinText, NotInTitle, NotInText]) => Integer                                                    ; Returns the entry number of a ListBox or ComboBox that is a complete match for the specified string.
+    ControlFocus(Control [, WinTitle, WinText, NotInTitle, NotInText]) => EmptyString                                                           ; Sets input focus to a given control on a window.
+    ControlGetChecked(Control [, WinTitle, WinText, NotInTitle, NotInText]) => Integer                                                          ; Returns a non-zero value if the checkbox or radio button is checked.
+    ControlGetChoice(Control [, WinTitle, WinText, NotInTitle, NotInText]) => String                                                            ; Returns the name of the currently selected entry in a ListBox or ComboBox.
+    ControlGetClassNN(Control [, WinTitle, WinText, NotInTitle, NotInText]) => String                                                           ; Returns the ClassNN (class name and sequence number) of the specified control.
+    ControlGetEnabled(Control [, WinTitle, WinText, NotInTitle, NotInText]) => Integer                                                          ; Returns a non-zero value if the specified control is enabled.
+    ControlGetExStyle(Control [, WinTitle, WinText, NotInTitle, NotInText]) => Integer                                                          ; Returns an integer representing the style or extended style of the specified control.
+    ControlGetFocus([WinTitle, WinText, NotInTitle, NotInText]) => Integer                                                                      ; Retrieves which control of the target window has keyboard focus, if any.
+    ControlGetHwnd(Control [, WinTitle, WinText, NotInTitle, NotInText]) => Integer                                                             ; Returns the unique ID number of the specified control.
+    ControlGetIndex(Control [, WinTitle, WinText, NotInTitle, NotInText]) => Integer                                                            ; Returns the index of the currently selected entry or tab in a ListBox, ComboBox or Tab control.
+    ControlGetItems(Control [, WinTitle, WinText, NotInTitle, NotInText]) => Array                                                              ; Returns an array of items/rows from a ListBox, ComboBox, or DropDownList.
+    ControlGetPos([&OutX, &OutY, &OutWidth, &OutHeight, Control, WinTitle, WinText, NotInTitle, NotInText]) => EmptyString                      ; Retrieves the position and size of a control.
+    ControlGetStyle(Control [, WinTitle, WinText, NotInTitle, NotInText]) => Integer                                                            ; Returns an integer representing the style or extended style of the specified control.
+    ControlGetText(Control [, WinTitle, WinText, NotInTitle, NotInText]) => String                                                              ; Retrieves text from a control.
+    ControlGetVisible(Control [, WinTitle, WinText, NotInTitle, NotInText]) => Integer                                                          ; Returns a non-zero value if the specified control is visible.
+    ControlHide(Control [, WinTitle, WinText, NotInTitle, NotInText]) => EmptyString                                                            ; Hides the specified control.
+    ControlHideDropDown(Control [, WinTitle, WinText, NotInTitle, NotInText]) => EmptyString                                                    ; Hides the drop-down list of a ComboBox control.
+    ControlMove([X, Y, Width, Height, Control, WinTitle, WinText, NotInTitle, NotInText]) => EmptyString                                        ; Moves or resizes a control.
+    ControlSend(Keys [, Control, WinTitle, WinText, NotInTitle, NotInText]) => EmptyString                                                      ; Sends simulated keystrokes to a window or control.
+    ControlSendText(Keys [, Control, WinTitle, WinText, NotInTitle, NotInText]) => EmptyString                                                  ; Sends text to a window or control.
+    ControlSetChecked(NewSetting, Control [, WinTitle, WinText, NotInTitle, NotInText]) => EmptyString                                          ; Turns on (checks) or turns off (unchecks) a checkbox or radio button.
+    ControlSetEnabled(NewSetting, Control [, WinTitle, WinText, NotInTitle, NotInText]) => EmptyString                                          ; Enables or disables the specified control.
+    ControlSetExStyle(Value, Control [, WinTitle, WinText, NotInTitle, NotInText]) => EmptyString                                               ; Changes the extended style of the specified control.
+    ControlSetStyle(Value, Control [, WinTitle, WinText, NotInTitle, NotInText]) => EmptyString                                                 ; Changes the style of the specified control.
+    ControlSetText(NewText, Control [, WinTitle, WinText, NotInTitle, NotInText]) => EmptyString                                                ; Changes the text of a control.
+    ControlShow(Control [, WinTitle, WinText, NotInTitle, NotInText]) => EmptyString                                                            ; Shows the specified control if it was previously hidden.
+    ControlShowDropDown(Control [, WinTitle, WinText, NotInTitle, NotInText]) => EmptyString                                                    ; Shows the drop-down list of a ComboBox control.
+    CoordMode(TargetType [, RelativeTo]) => String                                                                                              ; Sets coordinate mode for various built-in functions to be relative to either the active window or the screen.
+    Cos(num) => Number                                                                                                                          ; Returns the trigonometric cosine of the specified number.
+    Critical(OnOffNumeric) => Integer                                                                                                           ; Prevents the current thread from being interrupted by other threads, or enables it to be interrupted.
+    DateAdd(DateTime, Time, TimeUnits) => String                                                                                                ; Adds or subtracts time from a date-time value.
+    DateDiff(DateTime1, DateTime2, TimeUnits) => Integer                                                                                        ; Compares two date-time values and returns the difference.
+    DetectHiddenText(Mode) => Integer                                                                                                           ; Determines whether invisible text in a window is "seen" for the purpose of finding the window. This affects windowing functions such as WinExist and WinActivate.
+    DetectHiddenWindows(Mode) => Integer                                                                                                        ; Determines whether invisible windows are "seen" by the script.
+    DirCopy(Source, Dest [, Overwrite]) => EmptyString                                                                                          ; Copies a folder along with all its sub-folders and files (similar to xcopy).
+    DirCreate(DirName) => EmptyString                                                                                                           ; Creates a folder.
+    DirDelete(DirName [, Recurse]) => EmptyString                                                                                               ; Deletes a folder.
+    DirExist(FilePattern) => String                                                                                                             ; Checks for the existence of a folder and returns its attributes.
+    DirMove(Source, Dest [, OverwriteOrRename]) => EmptyString                                                                                  ; Moves a folder along with all its sub-folders and files. It can also rename a folder.
+    DirSelect([StartingFolder, Options, Prompt]) => String                                                                                      ; Displays a standard dialog that allows the user to select a folder.
+    DllCall(['DllNameOrPath\'] Function [, Type1, Arg1, TypeN, ArgM, CdeclReturnType]) => Primitive                                             ; Calls a function inside a DLL, such as a standard Windows API function.
+    Download(URL, Filename) => EmptyString                                                                                                      ; Downloads a file from the Internet.
+    DriveEject(Drive) => EmptyString                                                                                                            ; Ejects the tray of the specified CD/DVD drive. DriveEject can also eject a removable drive like a USB stick.
+    DriveGetCapacity(Path) => Integer                                                                                                           ; Returns the total capacity of the drive which contains the specified path, in megabytes.
+    DriveGetFileSystem(Drive) => String                                                                                                         ; Returns the type of the specified drive's file system.
+    DriveGetLabel(Drive) => String                                                                                                              ; Returns the volume label of the specified drive.
+    DriveGetList(DriveType) => String                                                                                                           ; Returns a string of letters, one character for each drive letter in the system.
+    DriveGetSerial(Drive) => Integer                                                                                                            ; Returns the volume serial number of the specified drive.
+    DriveGetSpaceFree(Path) => Integer                                                                                                          ; Returns the free disk space of the drive which contains the specified path, in megabytes.
+    DriveGetStatus(Path) => String                                                                                                              ; Returns the status of the drive which contains the specified path.
+    DriveGetStatusCD([Drive]) => String                                                                                                         ; Returns the media status of the specified CD/DVD drive.
+    DriveGetType(Path) => String                                                                                                                ; Returns the type of the drive which contains the specified path.
+    DriveLock(Drive) => EmptyString                                                                                                             ; Prevents the eject feature of the specified drive from working.
+    DriveRetract(Drive) => EmptyString                                                                                                          ; Retracts the tray of the specified CD/DVD drive.
+    DriveSetLabel(Drive [, NewLabel]) => EmptyString                                                                                            ; Changes the volume label of the specified drive.
+    DriveUnlock(Drive) => EmptyString                                                                                                           ; Restores the eject feature of the specified drive.
+    Edit() => EmptyString                                                                                                                       ; Opens the current script for editing in the default editor.
+    EditGetCurrentCol(Control [, WinTitle, WinText, NotInTitle, NotInText]) => Integer                                                          ; Returns the column number in an Edit control where the caret (text insertion point) resides.
+    EditGetCurrentLine(Control [, WinTitle, WinText, NotInTitle, NotInText]) => Integer                                                         ; Returns the line number in an Edit control where the caret (text insert point) resides.
+    EditGetLine(N, Control [, WinTitle, WinText, NotInTitle, NotInText]) => String                                                              ; Returns the text of the specified line in an Edit control.
+    EditGetLineCount(Control [, WinTitle, WinText, NotInTitle, NotInText]) => Integer                                                           ; Returns the number of lines in an Edit control.
+    EditGetSelectedText(Control [, WinTitle, WinText, NotInTitle, NotInText]) => String                                                         ; Returns the selected text in an Edit control.
+    EditPaste(String, Control [, WinTitle, WinText, NotInTitle, NotInText]) => EmptyString                                                      ; Pastes the specified string at the caret (text insertion point) in an Edit control.
+    EnvGet(EnvVar) => String                                                                                                                    ; Retrieves the value of the specified environment variable.
+    EnvSet(EnvVar [, Value]) => EmptyString                                                                                                     ; Writes a value to the specified environment variable.
+    Exit(ExitCode) => Integer                                                                                                                   ; Exits the current thread.
+    ExitApp(ExitCode) => Integer                                                                                                                ; Terminates the script.
+    Exp(Num) => Number                                                                                                                          ; Returns the result of raising e (which is approximately 2.71828182845905) to the Nth power.
+    FileAppend(Text [, Filename, Options]) => EmptyString                                                                                       ; Writes text or binary data to the end of a file (first creating the file, if necessary).
+    FileCopy(SourcePattern, DestPattern [, Overwrite]) => EmptyString                                                                           ; Copies one or more files.
+    FileCreateShortcut(Target, LinkFile [, WorkingDir, Args, Description, IconFile, ShortcutKey, IconNumber, RunState]) => EmptyString          ; Creates a shortcut (.lnk) file.
+    FileDelete(FilePattern) => EmptyString                                                                                                      ; Deletes one or more files.
+    FileEncoding(Encoding) => String                                                                                                            ; Sets the default encoding for FileRead, Loop Read, FileAppend, and FileOpen.
+    FileExist(FilePattern) => String                                                                                                            ; Checks for the existence of a file or folder and returns its attributes.
+    FileGetAttrib([Filename]) => String                                                                                                         ; Reports whether a file or folder is read-only, hidden, etc.
+    FileGetShortcut(LinkFile [, &OutTarget, &OutDir, &OutArgs, &OutDescription, &OutIcon, &OutIconNum, &OutRunState]) => EmptyString            ; Retrieves information about a shortcut (.lnk) file, such as its target file.
+    FileGetSize([Filename, Units]) => Integer                                                                                                   ; Retrieves the size of a file.
+    FileGetTime([Filename, WhichTime]) => String                                                                                                ; Retrieves the datetime stamp of a file or folder.
+    FileGetVersion([Filename]) => String                                                                                                        ; Retrieves the version of a file.
+    FileInstall(Source, Dest [, Overwrite]) => EmptyString                                                                                      ; Includes the specified file inside the compiled version of the script.
+    FileMove(SourcePattern, DestPattern [, Overwrite]) => EmptyString                                                                           ; Moves or renames one or more files.
+    FileOpen(Filename, Flags [, Encoding]) => File                                                                                              ; Opens a file to read specific content from it and/or to write new content into it.
+    FileRead(Filename [, Options]) => String OR Buffer                                                                                          ; Retrieves the contents of a file.
+    FileRecycle(FilePattern) => EmptyString                                                                                                     ; Sends a file or directory to the recycle bin if possible, or permanently deletes it.
+    FileRecycleEmpty([DriveLetter]) => EmptyString                                                                                              ; Empties the recycle bin.
+    FileSelect([Options, RootDir\Filename, Title, Filter]) => String or Array                                                                   ; Displays a standard dialog that allows the user to open or save file(s).
+    FileSetAttrib(Attributes [, FilePattern, Mode]) => EmptyString                                                                              ; Changes the attributes of one or more files or folders. Wildcards are supported.
+    FileSetTime([YYYYMMDDHH24MISS, FilePattern, WhichTime, Mode]) => EmptyString                                                                ; Changes the datetime stamp of one or more files or folders. Wildcards are supported.
+    Floor(Num) => Integer                                                                                                                       ; Returns the specified number rounded down to the nearest integer (without any .00 suffix).
+    Format(FormatStr [, Val1, ..., ValN]) => String                                                                                             ; Formats a variable number of input values according to a format string.
+    FormatTime([YYYYMMDDHH24MISS, Format]) => String                                                                                            ; Transforms a YYYYMMDDHH24MISS timestamp into the specified date/time format.
+    GetKeyName(KeyName) => String                                                                                                               ; Retrieves the name/text of a key.
+    GetKeySC(KeyName) => Integer                                                                                                                ; Retrieves the scan code of a key.
+    GetKeyState(KeyName [, Mode]) => Primitive                                                                                                  ; Returns 1 (true) or 0 (false) depending on whether the specified keyboard key or mouse/controller button is down or up. Also retrieves controller status.
+    GetKeyVK(KeyName) => Integer                                                                                                                ; Retrieves the virtual key code of a key.
+    GetMethod(Value [, Name, ParamCount]) => Func                                                                                               ; Retrieves the implementation function of a method.
+    GroupActivate(GroupName [, Mode]) => Integer                                                                                                ; Activates the next window in a window group that was defined with GroupAdd.
+    GroupAdd(GroupName [, WinTitle, WinText, NotInTitle, NotInText]) => EmptyString                                                             ; Adds a window specification to a window group, creating the group if necessary.
+    GroupClose(GroupName [, Mode]) => EmptyString                                                                                               ; Closes the active window if it was just activated by GroupActivate or GroupDeactivate. It then activates the next window in the series. It can also close all windows in a group.
+    GroupDeactivate(GroupName [, Mode]) => EmptyString                                                                                          ; Similar to GroupActivate except activates the next window not in the group.
+    GuiCtrlFromHwnd(Hwnd) => Gui.Control                                                                                                        ; Retrieves the GuiControl object of a GUI control associated with the specified window handle.
+    GuiFromHwnd(Hwnd [, RecurseParent]) => Gui                                                                                                  ; Retrieves the Gui object of a GUI window associated with the specified window handle.
+    HasBase(Value, BaseObj) => Integer                                                                                                          ; Returns true if the specified base object is in the value's chain of base objects.
+    HasMethod(Value, Name, ParamCount) => Integer                                                                                               ; Returns true if the value has a method by this name.
+    HasProp(Value, Name) => Integer                                                                                                             ; Returns true if the value has a property by this name.
+    HotIf(ExpressionOrCallback) => EmptyString                                                                                                  ; Specifies the criteria for subsequently created or modified hotkey variants and hotstring variants.
+    HotIfWinActive(WinTitle, WinText) => EmptyString                                                                                            ; Specifies the criteria for subsequently created or modified hotkey variants and hotstring variants.
+    HotIfWinExist(WinTitle, WinText) => EmptyString                                                                                             ; Specifies the criteria for subsequently created or modified hotkey variants and hotstring variants.
+    HotIfWinNotActive(WinTitle, WinText) => EmptyString                                                                                         ; Specifies the criteria for subsequently created or modified hotkey variants and hotstring variants.
+    HotIfWinNotExist(WinTitle, WinText) => EmptyString                                                                                          ; Specifies the criteria for subsequently created or modified hotkey variants and hotstring variants.
+    Hotkey(KeyName [, Action, Options]) => EmptyString                                                                                          ; Creates, modifies, enables, or disables a hotkey while the script is running.
+    Hotstring(String [, Replacement, OnOffToggle]) => EmptyString                                                                               ; Creates, modifies, enables, or disables a hotstring while the script is running.
+    Hotstring(NewOptions) => EmptyString                                                                                                        ; Creates, modifies, enables, or disables a hotstring while the script is running.
+    Hotstring(SubFunction [, Value]) => EmptyString                                                                                             ; Creates, modifies, enables, or disables a hotstring while the script is running.
+    IL_Add(ImageListID, IconFileName [, IconNumber]) => Integer                                                                                 ; Adds an icon or picture to the specified ImageList.
+    IL_Add(ImageListID, PicFileName, MaskColor, Resize) => Integer                                                                              ; Adds an icon or picture to the specified ImageList.
+    IL_Create([InitialCount, GrowCount, LargeIcons]) => Integer                                                                                 ; Creates a new ImageList that is initially empty.
+    IL_Destroy(ImageListID) => Integer                                                                                                          ; Deletes the specified ImageList.
+    ImageSearch(&OutX, &OutY, X1, Y1, X2, Y2, ImageFile) => Integer                                                                             ; Searches a region of the screen for an image.
+    IniDelete(Filename, Section [, Key]) => EmptyString                                                                                         ; Deletes a value from a standard format .ini file.
+    IniRead(Filename, Section, Key [, Default]) => String                                                                                       ; Reads a value from a standard format .ini file.
+    IniRead(Filename, Section) => String                                                                                                        ; Reads a section from a standard format .ini file.
+    IniRead(Filename) => String                                                                                                                 ; Reads a list of section names from a standard format .ini file.
+    IniWrite(Value, Filename, Section, Key) => EmptyString                                                                                      ; Writes a value or section to a standard format .ini file.
+    IniWrite(Value, Filename, Section) => EmptyString                                                                                           ; Writes a value or section to a standard format .ini file.
+    InputBox([Prompt, Title, Options, Default]) => Object                                                                                       ; Displays an input box to ask the user to enter a string.
+    InstallKeybdHook([Install, Force]) => EmptyString                                                                                           ; Installs or uninstalls the keyboard hook.
+    InstallMouseHook([Install, Force]) => EmptyString                                                                                           ; Installs or uninstalls the mouse hook.
+    InStr(Haystack, Needle [, CaseSense, StartingPos, Occurrence]) => Integer                                                                   ; Searches for a given occurrence of a string, from the left or the right.
+    IsLabel(LabelName) => Integer                                                                                                               ; Returns a non-zero number if the specified label exists in the current scope.
+    IsObject(Value) => Integer                                                                                                                  ; Returns a non-zero number if the specified value is an object.
+    IsSet(Var) => Integer                                                                                                                       ; Returns a non-zero number if the specified variable has been assigned a value.
+    IsSetRef(&Ref) => Integer                                                                                                                   ; Returns a non-zero number if the specified var ref has been assigned a value.
+    KeyHistory([MaxEvents]) => EmptyString                                                                                                      ; Displays script info and a history of the most recent keystrokes and mouse clicks.
+    KeyWait(KeyName [, Options]) => Integer                                                                                                     ; Waits for a key or mouse/controller button to be released or pressed down.
+    ListHotkeys() => EmptyString                                                                                                                ; Displays the hotkeys in use by the current script, whether their subroutines are currently running, and whether or not they use the keyboard or mouse hook.
+    ListLines([Mode]) => Integer                                                                                                                ; Enables or disables line logging or displays the script lines most recently executed.
+    ListVars() => EmptyString                                                                                                                   ; Displays the script's variables: their names and current contents.
+    ListViewGetContent([Options, Control, WinTitle, WinText, NotInTitle, NotInText]) => String                                                  ; Returns a list of items/rows from a ListView.
+    Ln(Num) => Number                                                                                                                           ; Returns the natural logarithm (base e) of the specified number.
+    LoadPicture(Filename [, Options, &OutImageType]) => Integer                                                                                 ; Loads a picture from file and returns a bitmap or icon handle.
+    Log(Num) => Number                                                                                                                          ; Returns the logarithm (base 10) of the specified number.
+    LTrim(String [, OmitChars]) => String                                                                                                       ; Trims characters from the beginning and/or end of a string.
+    Max(Number1 [, Number2, ..., NumberN]) => Number                                                                                            ; Returns the highest number from a set of numbers.
+    MenuFromHandle(Handle) => Menu OR MenuBar                                                                                                   ; Retrieves the Menu or MenuBar object corresponding to a Win32 menu handle.
+    MenuSelect(WinTitle, WinText, Menu [, SubMenu1, SubMenu2, SubMenu3, SubMenu4, SubMenu5, SubMenu6, NotInTitle, NotInText]) => EmptyString    ; Invokes a menu item from the menu bar of the specified window.
+    Min(Number1 [, Number2, ..., NumberN]) => Number                                                                                            ; Returns the lowest number from a set of numbers.
+    Mod(Dividend, Divisor) => Number                                                                                                            ; Modulo. Returns the remainder of a number (dividend) divided by another number (divisor).
+    MonitorGet([N, &Left, &Top, &Right, &Bottom]) => Integer                                                                                    ; Checks if the specified monitor exists and optionally retrieves its bounding coordinates.
+    MonitorGetCount() => Integer                                                                                                                ; Returns the total number of monitors.
+    MonitorGetName([Num]) => String                                                                                                             ; Returns the operating system's name of the specified monitor.
+    MonitorGetPrimary() => Integer                                                                                                              ; Returns the number of the primary monitor.
+    MonitorGetWorkArea([N, &Left, &Top, &Right, &Bottom]) => Integer                                                                            ; Checks if the specified monitor exists and optionally retrieves the bounding coordinates of its working area.
+    MouseClick([WhichButton, X, Y, ClickCount, Speed, DownOrUp, Relative]) => EmptyString                                                       ; Clicks or holds down a mouse button, or turns the mouse wheel. Note: The Click function is generally more flexible and easier to use.
+    MouseClickDrag([WhichButton], X1, Y1, X2, Y2 [, Speed, Relative]) => EmptyString                                                            ; Clicks and holds the specified mouse button at x1 y1, drags to x2 y2, and releases button.
+    MouseClickDrag([WhichButton], , , X2, Y2 [, Speed, Relative]) => EmptyString                                                                ; Clicks and holds the specified mouse button at the current x y coordinate, drags to x2 y2, and releases button.
+    MouseGetPos(OutX, &OutY, &OutWin, &OutControl, Flag) => EmptyString                                                                         ; Retrieves the current position of the mouse cursor, and optionally which window and control it is hovering over.
+    MouseMove(X, Y [, Speed, Relative]) => EmptyString                                                                                          ; Moves the mouse cursor.
+    MsgBox([Text, Title, Options]) => String                                                                                                    ; Displays the specified text in a small window containing one or more buttons (such as Yes and No).
+    NumGet(Source, Offset, Type) => Number                                                                                                      ; Returns the binary number stored at the specified address+offset.
+    NumGet(Source, Type) => Number                                                                                                              ; Returns the binary number stored at the specified address+offset.
+    NumPut(Type1, Number1 [, ..., TypeN, NumberN,] Target [, Offset]) => Integer                                                                ; Stores one or more numbers in binary format at the specified address+offset.
+    ObjAddRef(Ptr) => Integer                                                                                                                   ; Increments an object's reference count.
+    ObjBindMethod(Obj [, Method, Params]) => BoundFunc                                                                                          ; Creates a BoundFunc object which calls a method of a given object.
+    ObjGetBase(Value) => Prototype                                                                                                              ; Returns the value's base object.
+    ObjGetCapacity(Obj) => Integer                                                                                                              ; ObjSetCapacity: Retrieve or set an Object's capacity to contain properties.
+    ObjHasOwnProp(Obj, Name) => Integer                                                                                                         ; Returns 1 (true) if an object owns a property by the specified name.
+    ObjOwnPropCount(Obj) => Integer                                                                                                             ; Retrieve the number of own properties contained by an object.
+    ObjOwnProps(obj) => Enumerator                                                                                                              ; Enumerates an object's own properties.
+    ObjRelease(Ptr) => Integer                                                                                                                  ; Decrements an object's reference count.
+    ObjSetBase(Obj, BaseObj) => EmptyString                                                                                                     ; Set an object's base object.
+    ObjSetCapacity(Obj, MaxProps) => Integer                                                                                                    ; Retrieve or set an Object's capacity to contain properties.
+    OnClipboardChange(Callback [, AddRemove]) => EmptyString                                                                                    ; Registers a function to be called automatically whenever the clipboard's content changes.
+    OnError(Callback [, AddRemove]) => EmptyString                                                                                              ; Registers a function to be called automatically whenever an unhandled error occurs.
+    OnExit(Callback [, AddRemove]) => EmptyString                                                                                               ; Registers a function to be called automatically whenever the script exits.
+    OnMessage(MsgNumber, Callback [, MaxThreads]) => Integer                                                                                    ; Registers a function to be called automatically whenever the script receives the specified message.
+    Ord(String) => Integer                                                                                                                      ; Returns the ordinal value (numeric character code) of the first character in the specified string.
+    OutputDebug(Text) => EmptyString                                                                                                            ; Sends a string to the debugger (if any) for display.
+    Pause([NewState]) => EmptyString                                                                                                            ; Pauses the script's current thread.
+    Persistent(Persist) => Integer                                                                                                              ; Prevents the script from exiting automatically when its last thread completes, allowing it to stay running in an idle state.
+    PixelGetColor(X, Y [, Mode]) => String                                                                                                      ; Retrieves the color of the pixel at the specified X and Y coordinates.
+    PixelSearch(&OutX, &OutY, X1, Y1, X2, Y2, ColorID [, Variation]) => Integer                                                                 ; Searches a region of the screen for a pixel of the specified color.
+    PostMessage(MsgNumber [, wParam, lParam, Control, WinTitle, WinText, NotInTitle, NotInText]) => EmptyString                                 ; Places a message in the message queue of a window or control.
+    ProcessClose(PIDOrName) => Integer                                                                                                          ; Forces the first11 matching process to close.
+    ProcessExist([PIDOrName]) => Integer                                                                                                        ; Checks if the specified process exists.
+    ProcessGetName([PIDOrName]) => String                                                                                                       ; Returns the name of the specified process.
+    ProcessGetParent([PIDOrName]) => Integer                                                                                                    ; Returns the process ID (PID) of the process which created the specified process.
+    ProcessGetPath([PIDOrName]) => String                                                                                                       ; Returns the path of the specified process.
+    ProcessSetPriority(Level [, PIDOrName]) => Integer                                                                                          ; Changes the priority level of the first matching process.
+    ProcessWait(PIDOrName [, Timeout]) => Integer                                                                                               ; Waits for the specified process to exist.
+    ProcessWaitClose(PIDOrName [, Timeout]) => Integer                                                                                          ; Waits for all matching processes to close.
+    Random(NumLow, NumHigh) => Number                                                                                                           ; Generates a pseudo-random number.
+    RegCreateKey([KeyName]) => EmptyString                                                                                                      ; Creates a registry key without writing a value.
+    RegDelete([KeyName, ValueName]) => EmptyString                                                                                              ; Deletes a value from the registry.
+    RegDeleteKey([KeyName]) => EmptyString                                                                                                      ; Deletes a subkey from the registry.
+    RegExMatch(Haystack, NeedleRegEx [, &Out, StartingPos]) => Integer                                                                          ; Determines whether a string contains a pattern (regular expression).
+    RegExReplace(Haystack, NeedleRegEx [, Replacement, &OutCount, Limit, StartingPos]) => String                                                ; Replaces occurrences of a pattern (regular expression) inside a string.
+    RegRead([KeyName, ValueName, Default]) => String OR Integer                                                                                 ; Reads a value from the registry.
+    RegWrite(Value, ValueType, KeyName [, ValueName]) => EmptyString                                                                            ; Writes a value to the registry.
+    RegWrite(Value [, ValueType, , ValueName]) => EmptyString                                                                                   ; Writes a value to the registry default.
+    Reload() => EmptyString                                                                                                                     ; Replaces the currently running instance of the script with a new one.
+    Round(Num [, Precision]) => Number                                                                                                          ; Returns the specified number rounded to N decimal places.
+    RTrim(String [, OmitChars]) => String                                                                                                       ; Trims characters from the beginning and/or end of a string.
+    Run(Target [, WorkingDir, Options, &OutPID]) => Integer                                                                                     ; Runs an external program.
+    RunAs([User, Password, Domain]) => EmptyString                                                                                              ; Specifies a set of user credentials to use for all subsequent Run and RunWait functions.
+    RunWait(Target [, WorkingDir, Options, &OutPID]) => Integer                                                                                 ; Runs an external program and waits until it finishes.
+    Send(Keys) => EmptyString                                                                                                                   ; Sends simulated keystrokes and mouse clicks to the active window.
+    SendEvent(Keys) => EmptyString                                                                                                              ; Sends simulated keystrokes and mouse clicks to the active window.
+    SendInput(Keys) => EmptyString                                                                                                              ; Sends simulated keystrokes and mouse clicks to the active window.
+    SendLevel(Level) => Integer                                                                                                                 ; Controls which artificial keyboard and mouse events are ignored by hotkeys and hotstrings.
+    SendMessage(MsgNumber [, wParam, lParam, Control, WinTitle, WinText, NotInTitle, NotInText, Timeout]) => Integer                            ; Sends a message to a window or control and waits for acknowledgement.
+    SendMode(Mode) => String                                                                                                                    ; Makes Send synonymous with SendEvent or SendPlay rather than the default (SendInput). Also makes Click and MouseMove/Click/Drag use the specified method.
+    SendPlay(Keys) => EmptyString                                                                                                               ; Sends simulated keystrokes and mouse clicks to the active window.
+    SendText(Keys) => EmptyString                                                                                                               ; Sends simulated keystrokes and mouse clicks to the active window.
+    SetCapsLockState([State]) => EmptyString                                                                                                    ; Sets the state of CapsLock. Can also force the key to stay on or off.
+    SetControlDelay(Delay) => Integer                                                                                                           ; Sets the delay that will occur after each control-modifying function.
+    SetDefaultMouseSpeed(Speed) => Integer                                                                                                      ; Sets the mouse speed that will be used if unspecified in Click, MouseMove, MouseClick, and MouseClickDrag.
+    SetKeyDelay([Delay, PressDuration, Play]) => EmptyString                                                                                    ; Sets the delay that will occur after each keystroke sent by Send or ControlSend.
+    SetMouseDelay(Delay [, Play]) => Integer                                                                                                    ; Sets the delay that will occur after each mouse movement or click.
+    SetNumLockState([State]) => EmptyString                                                                                                     ; Sets the state of NumLock. Can also force the key to stay on or off.
+    SetRegView(RegView) => String                                                                                                               ; Sets the registry view used by RegRead, RegWrite, RegDelete, RegDeleteKey and Loop Reg, allowing them in a 32-bit script to access the 64-bit registry view and vice versa.
+    SetScrollLockState([State]) => EmptyString                                                                                                  ; Sets the state of ScrollLock. Can also force the key to stay on or off.
+    SetStoreCapsLockMode(Mode) => Integer                                                                                                       ; Whether to restore the state of CapsLock after a Send.
+    SetTimer([Function, Period, Priority]) => EmptyString                                                                                       ; Causes a function to be called automatically and repeatedly at a specified time interval.
+    SetTitleMatchMode(MatchMode) => Integer OR String                                                                                           ; Sets the matching behavior of the WinTitle parameter in built-in functions such as WinWait.
+    SetTitleMatchMode(Speed) => Integer OR String                                                                                               ; Sets the matching behavior of the WinTitle parameter in built-in functions such as WinWait.
+    SetWinDelay(Delay) => Integer                                                                                                               ; Sets the delay that will occur after each windowing function, such as WinActivate.
+    SetWorkingDir(DirName) => EmptyString                                                                                                       ; Changes the script's current working directory.
+    Shutdown(Flag) => EmptyString                                                                                                               ; Shuts down, restarts, or logs off the system.
+    Sin(Number) => Number                                                                                                                       ; Returns the trigonometric sine of the specified number.
+    Sleep(Delay) => EmptyString                                                                                                                 ; Waits the specified amount of time before continuing.
+    Sort(String [, Options, Callback]) => String                                                                                                ; Arranges a variable's contents in alphabetical, numerical, or random order (optionally removing duplicates).
+    SoundBeep([Frequency, Duration]) => EmptyString                                                                                             ; Emits a tone from the PC speaker.
+    SoundGetInterface(IID [, Component, Device]) => Integer                                                                                     ; Retrieves a native COM interface of a sound device or component.
+    SoundGetMute([Component, Device]) => Integer                                                                                                ; Retrieves a mute setting of a sound device.
+    SoundGetName([Component, Device]) => String                                                                                                 ; Retrieves the name of a sound device or component.
+    SoundGetVolume([Component, Device]) => Float                                                                                                ; Retrieves a volume setting of a sound device.
+    SoundPlay(Filename [, Wait]) => EmptyString                                                                                                 ; Plays a sound, video, or other supported file type.
+    SoundSetMute(NewSetting [, Component, Device]) => EmptyString                                                                               ; Changes a mute setting of a sound device.
+    SoundSetVolume(NewSetting [, Component, Device]) => EmptyString                                                                             ; Changes a volume setting of a sound device.
+    SplitPath(Path , &OutFileName, &OutDir, &OutExtension, &OutNameNoExt, &OutDrive) => EmptyString                                             ; Separates a file name or URL into its name, directory, extension, and drive.
+    Sqrt(Number) => Number                                                                                                                      ; Returns the square root of the specified number.
+    StatusBarGetText([SectionNum, WinTitle, WinText, NotInTitle, NotInText]) => String                                                          ; Retrieves the text from a standard status bar control.
+    StatusBarWait([BarText, Timeout, SectionNum, WinTitle, WinText, Interval, NotInTitle, NotInText]) => Integer                                ; Waits until a window's status bar contains the specified string.
+    StrCompare(String1, String2 [, CaseSense]) => Integer                                                                                       ; Compares two strings alphabetically.
+    StrGet(Source [, Length, Encoding]) => String                                                                                               ; Copies a string from a memory address or buffer, optionally converting it from a given code page.
+    StrGet(Source [, Encoding]) => String                                                                                                       ; Copies a string from a memory address or buffer, optionally converting it from a given code page.
+    StrLen(String) => Integer                                                                                                                   ; Retrieves the count of how many characters are in a string.
+    StrLower(String) => String                                                                                                                  ; Converts a string to lowercase.
+    StrPtr(Value) => Integer                                                                                                                    ; Returns the current memory address of a string.
+    StrPut(String, Target [, Length, Encoding]) => Integer                                                                                      ; Copies a string to a memory address or buffer, optionally converting it to a given code page.
+    StrPut(String, Target [, Encoding]) => Integer                                                                                              ; Copies a string to a memory address or buffer, optionally converting it to a given code page.
+    StrPut(String [, Encoding]) => Integer                                                                                                      ; Copies a string to a memory address or buffer, optionally converting it to a given code page.
+    StrReplace(Haystack, Needle [, ReplaceText, CaseSense, &OutCount, Limit]) => String                                                         ; Replaces the specified substring with a new string.
+    StrSplit(String [, Delimiters, OmitChars, MaxParts]) => Array                                                                               ; Separates a string into an array of substrings using the specified delimiters.
+    StrTitle(String) => String                                                                                                                  ; Converts a string to title case.
+    StrUpper(String) => String                                                                                                                  ; Converts a string to uppercase.
+    SubStr(String, StartingPos [, Length]) => String                                                                                            ; Retrieves one or more characters from the specified position in a string.
+    Suspend([NewState]) => EmptyString                                                                                                          ; Disables or enables all or selected hotkeys and hotstrings.
+    SysGet(Property) => Integer                                                                                                                 ; Retrieves dimensions of system objects, and other system properties.
+    SysGetIPAddresses() => Array                                                                                                                ; Returns an array of the system's IPv4 addresses.
+    Tan(Number) => Number                                                                                                                       ; Returns the trigonometric tangent of the specified number.
+    Thread(NoTimers [, False]) => EmptyString                                                                                                   ; Sets the priority or interruptibility of threads. It can also temporarily disable all timers.
+    Thread(Priority, Level) => EmptyString                                                                                                      ; Sets the priority or interruptibility of threads. It can also temporarily disable all timers.
+    Thread(Interrupt [, Duration, LineCount]) => EmptyString                                                                                    ; Sets the priority or interruptibility of threads. It can also temporarily disable all timers.
+    ToolTip([Text, X, Y, WhichToolTip]) => Integer OR EmptyString                                                                               ; Shows an always-on-top window anywhere on the screen.
+    TraySetIcon([FileName, IconNumber, Freeze]) => EmptyString                                                                                  ; Changes the script's tray icon (which is also used by GUI and dialog windows).
+    TrayTip([Text, Title, Options]) => EmptyString                                                                                              ; Shows a balloon message window or, on Windows 10 and later, a toast notification near the tray icon.
+    Trim(String [, OmitChars]) => String                                                                                                        ; Trims characters from the beginning and/or end of a string.
+    Type(Value) => String                                                                                                                       ; Returns the class name of a value.
+    VarSetStrCapacity(&TargetVar [, RequestedCapacity]) => Integer                                                                              ; Enlarges a variable's holding capacity or frees its memory. This is not normally needed, but may be used with DllCall or SendMessage or to optimize repeated concatenation.
+    VerCompare(VersionA, VersionB) => Integer                                                                                                   ; Compares two version strings.
+    WinActivate([WinTitle, WinText, NotInTitle, NotInText]) => EmptyString                                                                      ; Activates the specified window.
+    WinActivateBottom([WinTitle, WinText, NotInTitle, NotInText]) => EmptyString                                                                ; Same as WinActivate except that it activates the bottommost matching window rather than the topmost.
+    WinActive([WinTitle, WinText, NotInTitle, NotInText]) => EmptyString                                                                        ; Checks if the specified window is active and returns its unique ID (HWND).
+    WinClose([WinTitle, WinText, SecondsToWait, NotInTitle, NotInText]) => EmptyString                                                          ; Closes the specified window.
+    WinExist([WinTitle, WinText, NotInTitle, NotInText]) => EmptyString                                                                         ; Checks if the specified window exists and returns the unique ID (HWND) of the first matching window.
+    WinGetClass([WinTitle, WinText, NotInTitle, NotInText]) => String                                                                           ; Retrieves the specified window's class name.
+    WinGetClientPos([&X, &Y, &Width, &Height, WinTitle, WinText, NotInTitle, NotInText]) => EmptyString                                         ; Retrieves the position and size of the specified window's client area.
+    WinGetControls([WinTitle, WinText, NotInTitle, NotInText]) => Array                                                                         ; Returns the control names for all controls in the specified window.
+    WinGetControlsHwnd([WinTitle, WinText, NotInTitle, NotInText]) => Array                                                                     ; Returns the unique ID numbers for all controls in the specified window.
+    WinGetCount([WinTitle, WinText, NotInTitle, NotInText]) => Integer                                                                          ; Returns the number of existing windows that match the specified criteria.
+    WinGetExStyle([WinTitle, WinText, NotInTitle, NotInText]) => Integer                                                                        ; Returns the extended style of the specified window.
+    WinGetID([WinTitle, WinText, NotInTitle, NotInText]) => Integer                                                                             ; Returns the unique ID number of the specified window.
+    WinGetIDLast([WinTitle, WinText, NotInTitle, NotInText]) => Integer                                                                         ; Returns the unique ID number of the last/bottommost window if there is more than one match.
+    WinGetList([WinTitle, WinText, NotInTitle, NotInText]) => Array                                                                             ; Returns the unique ID numbers of all existing windows that match the specified criteria.
+    WinGetMinMax([WinTitle, WinText, NotInTitle, NotInText]) => Integer                                                                         ; Returns a non-zero number if the specified window is maximized or minimized.
+    WinGetPID([WinTitle, WinText, NotInTitle, NotInText]) => Integer                                                                            ; Returns the Process ID number of the specified window.
+    WinGetPos([&OutX, &OutY, &OutWidth, &OutHeight, WinTitle, WinText, NotInTitle, NotInText]) => EmptyString                                   ; Retrieves the position and size of the specified window.
+    WinGetProcessName([WinTitle, WinText, NotInTitle, NotInText]) => String                                                                     ; Returns the name of the process that owns the specified window.
+    WinGetProcessPath([WinTitle, WinText, NotInTitle, NotInText]) => String                                                                     ; Returns the full path and name of the process that owns the specified window.
+    WinGetStyle([WinTitle, WinText, NotInTitle, NotInText]) => Integer                                                                          ; Returns the style of the specified window.
+    WinGetText([WinTitle, WinText, NotInTitle, NotInText]) => String                                                                            ; Retrieves the text from the specified window.
+    WinGetTitle([WinTitle, WinText, NotInTitle, NotInText]) => String                                                                           ; Retrieves the title of the specified window.
+    WinGetTransColor([WinTitle, WinText, NotInTitle, NotInText]) => String                                                                      ; Returns the color that is marked transparent in the specified window.
+    WinGetTransparent([WinTitle, WinText, NotInTitle, NotInText]) => Integer or EmptyString                                                     ; Returns the degree of transparency of the specified window.
+    WinHide[WinTitle, WinText, NotInTitle, NotInText]() => EmptyString                                                                          ; Hides the specified window.
+    WinKill([WinTitle, WinText, SecondsToWait, NotInTitle, NotInText]) => EmptyString                                                           ; Forces the specified window to close.
+    WinMaximize([WinTitle, WinText, NotInTitle, NotInText]) => EmptyString                                                                      ; Enlarges the specified window to its maximum size.
+    WinMinimize([WinTitle, WinText, NotInTitle, NotInText]) => EmptyString                                                                      ; Collapses the specified window into a button on the task bar.
+    WinMinimizeAll() => EmptyString                                                                                                             ; Minimizes or unminimizes all windows.
+    WinMinimizeAllUndo() => EmptyString                                                                                                         ; Minimizes or unminimizes all windows.
+    WinMove([X, Y, Width, Height, WinTitle, WinText, NotInTitle, NotInText]) => EmptyString                                                     ; Changes the position and/or size of the specified window.
+    WinMoveBottom([WinTitle, WinText, NotInTitle, NotInText]) => EmptyString                                                                    ; Sends the specified window to the bottom of stack; that is, beneath all other windows.
+    WinMoveTop([WinTitle, WinText, NotInTitle, NotInText]) => EmptyString                                                                       ; Brings the specified window to the top of the stack without explicitly activating it.
+    WinRedraw([WinTitle, WinText, NotInTitle, NotInText]) => EmptyString                                                                        ; Redraws the specified window.
+    WinRestore([WinTitle, WinText, NotInTitle, NotInText]) => EmptyString                                                                       ; Unminimizes or unmaximizes the specified window if it is minimized or maximized.
+    WinSetAlwaysOnTop([NewSetting, WinTitle, WinText, NotInTitle, NotInText]) => EmptyString                                                    ; Makes the specified window stay on top of all other windows (except other always-on-top windows).
+    WinSetEnabled(NewSetting [, WinTitle, WinText, NotInTitle, NotInText]) => EmptyString                                                       ; Enables or disables the specified window.
+    WinSetExStyle(Value [, WinTitle, WinText, NotInTitle, NotInText]) => EmptyString                                                            ; Changes the extended style of the specified window.
+    WinSetRegion([Options, WinTitle, WinText, NotInTitle, NotInText]) => EmptyString                                                            ; Changes the shape of the specified window to be the specified rectangle, ellipse, or polygon.
+    WinSetStyle(Value [, WinTitle, WinText, NotInTitle, NotInText]) => EmptyString                                                              ; Changes the style of the specified window.
+    WinSetTitle(NewTitle [, WinTitle, WinText, NotInTitle, NotInText]) => EmptyString                                                           ; Changes the title of the specified window.
+    WinSetTransColor(Color [, WinTitle, WinText, NotInTitle, NotInText]) => EmptyString                                                         ; Makes all pixels of the chosen color invisible inside the specified window.
+    WinSetTransparent(N, WinTitle, WinText, NotInTitle, NotInText) => EmptyString                                                               ; Makes the specified window semi-transparent.
+    WinShow([WinTitle, WinText, NotInTitle, NotInText]) => EmptyString                                                                          ; Unhides the specified window.
+    WinWait([WinTitle, WinText, Timeout, NotInTitle, NotInText]) => Integer                                                                     ; Waits until the specified window exists.
+    WinWaitActive([WinTitle, WinText, Timeout, NotInTitle, NotInText]) => Integer                                                               ; Waits until the specified window is active or not active.
+    WinWaitClose([WinTitle, WinText, Timeout, NotInTitle, NotInText]) => Integer                                                                ; Waits until no matching windows can be found.
+    WinWaitNotActive([WinTitle, WinText, Timeout, NotInTitle, NotInText]) => Integer                                                            ; Waits until the specified window is active or not active.
+
+
+;;FlowControl
+    Break([label])                                      ; Exits (terminates) any type of loop statement.
+    Catch [ErrorClass] [as OutVar]                      ; Specifies one or more statements to execute if a value or error is thrown during execution of a Try statement.
+    Continue([LoopLabel])                               ; Skips the rest of a loop statement's current iteration and begins a new one.
+    Else                                                ; Specifies one or more statements to execute if the associated statement's body did not execute.
+    Finally                                             ; Ensures that one or more statements are always executed after a Try statement finishes.
+    For Value1 [, Value2] in Expression                 ; Repeats one or more statements once for each key-value pair in an object.
+    Goto(Label)                                         ; Jumps to the specified label and continues execution.
+    If Expression                                       ; Specifies one or more statements to execute if an expression evaluates to true.
+    Loop([Count])                                       ; Performs one or more statements repeatedly: either the specified number of times or until Break is encountered.
+    Loop Files FilePattern [, Mode]                     ; Retrieves the specified files or folders, one at a time.
+    Loop Parse String [, DelimiterChars, OmitChars]     ; Retrieves substrings (fields) from a string, one at a time.
+    Loop Read InputFile [, OutputFile]                  ; Retrieves the lines in a text file, one at a time.
+    Loop Reg KeyName [, Mode]                           ; Retrieves the contents of the specified registry subkey, one item at a time.
+    Return [Expression]                                 ; Returns from a function to which execution had previously jumped via function-call, Hotkey activation, or other means.
+    Switch [SwitchValue, CaseSense]                     ; Compares a value with multiple cases and executes the statements of the first match.
+    Throw([Value])                                      ; Signals the occurrence of an error. This signal can be caught by a Try-Catch statement.
+    Try                                                 ; Guards one or more statements against runtime errors and values thrown by the Throw statement.
+    Until(Expression)                                   ; Applies a condition to the continuation of a Loop or For-loop.
+    While(Expression)                                   ; Performs one or more statements repeatedly until the specified expression evaluates to false.
+
+
+;;Directives
+    #ClipboardTimeout Milliseconds                      ; Changes how long the script keeps trying to access the clipboard when the first attempt fails.
+    #DllLoad [FileOrDirName]                            ; Loads a DLL or EXE file before the script starts executing.
+    #ErrorStdOut [Encoding]                             ; Sends any syntax error that prevents a script from launching to the standard error stream (stderr) rather than displaying a dialog.
+    #Hotstring NoMouse                                  ; Changes hotstring options or ending characters.
+    #Hotstring EndChars NewChars                        ; Changes hotstring options or ending characters.
+    #Hotstring NewOptions                               ; Changes hotstring options or ending characters.
+    #HotIf [Expression]                                 ; Creates context-sensitive hotkeys and hotstrings. Such hotkeys perform a different action (or none at all) depending on any condition (an expression).
+    #HotIfTimeout Timeout                               ; Sets the maximum time that may be spent evaluating a single #HotIf expression.
+    #Include FileOrDirName                              ; Causes the script to behave as though the specified file's contents are present at this exact position.
+    #Include LibName                                    ; Causes the script to behave as though the specified file's contents are present at this exact position.
+    #IncludeAgain FileOrDirName                         ; Causes the script to behave as though the specified file's contents are present at this exact position.
+    #InputLevel [Level]                                 ; Controls which artificial keyboard and mouse events are ignored by hotkeys and hotstrings.
+    #MaxThreads Value                                   ; Sets the maximum number of simultaneous threads.
+    #MaxThreadsBuffer [Setting]                         ; Causes some or all hotkeys to buffer rather than ignore keypresses when their #MaxThreadsPerHotkey limit has been reached.
+    #MaxThreadsPerHotkey Value                          ; Sets the maximum number of simultaneous threads per hotkey or hotstring.
+    #NoTrayIcon                                         ; Disables the showing of a tray icon.
+    #Requires Requirement                               ; Displays an error and quits if a version requirement is not met.
+    #SingleInstance [ForceIgnorePromptOff]              ; Determines whether a script is allowed to run again when it is already running.
+    #SuspendExempt [Setting]                            ; Exempts subsequent hotkeys and hotstrings from suspension.
+    #UseHook [Setting]                                  ; Forces the use of the hook to implement all or some keyboard hotkeys.
+    #Warn [WarningType, WarningMode]                    ; Enables or disables warnings for specific conditions which may indicate an error, such as a typo or missing "global" declaration.
+    #WinActivateForce                                   ; Skips the gentle method of activating a window and goes straight to the forceful method.
+
+
+;;Built-In Vars
+    A_AhkPath => String                                 ; For non-compiled or embedded scripts: The full path and name of the EXE file that is actually running the current script. For compiled scripts based on a .bin file, the value is determined by reading the installation directory from the registry and appending "\AutoHotkey.exe". If AutoHotkey is not installed, the value is blank. The example below is equivalent:
+    A_AhkVersion => String                              ; Contains the version of AutoHotkey that is running the script, such as 1.0.22. In the case of a compiled script, the version that was originally used to compile it is reported. The formatting of the version number allows a script to check whether A_AhkVersion is greater than some minimum version number with > or >= as in this example: if (A_AhkVersion >= "1.0.25.07"). See also: #Requires and VerCompare
+    A_AllowMainWindow => Integer                        ; Can be used to get or set whether the script's main window is allowed to be opened via the tray icon. Possible values are 0 (forbidden) and 1 (allowed).
+    A_AppData => String                                 ; The full path and name of the folder containing the current user's application-specific data. For example:
+    A_AppDataCommon => String                           ; The full path and name of the folder containing the all-users application-specific data. For example:
+    A_Args => Array                                     ; Contains an array of command line parameters. For details, see Passing Command Line Parameters to a Script.
+    A_Clipboard => String                               ; Can be used to get or set the contents of the OS's clipboard. For details, see A_Clipboard.
+    A_ComputerName => String                            ; The name of the computer as seen on the network.
+    A_ComSpec => String                                 ; Contains the same string as the ComSpec environment variable, which is usually the full path to the command prompt executable (cmd.exe). Often used with Run/RunWait. For example:
+    A_ControlDelay => Integer                           ; Can be used to get or set the delay for control-modifying functions, in milliseconds. For details, see SetControlDelay.
+    A_CoordModeCaret => String                          ; Can be used to get or set the area to which coordinates are to be relative. Possible values are Screen, Window, and Client. For details, see CoordMode.
+    A_CoordModeMenu => String                           ; Can be used to get or set the area to which coordinates are to be relative. Possible values are Screen, Window, and Client. For details, see CoordMode.
+    A_CoordModeMouse => String                          ; Can be used to get or set the area to which coordinates are to be relative. Possible values are Screen, Window, and Client. For details, see CoordMode.
+    A_CoordModePixel => String                          ; Can be used to get or set the area to which coordinates are to be relative. Possible values are Screen, Window, and Client. For details, see CoordMode.
+    A_CoordModeToolTip => String                        ; Can be used to get or set the area to which coordinates are to be relative. Possible values are Screen, Window, and Client. For details, see CoordMode.
+    A_Cursor => String                                  ; The type of mouse cursor currently being displayed. It will be one of the following words: AppStarting, Arrow, Cross, Help, IBeam, Icon, No, Size, SizeAll, SizeNESW, SizeNS, SizeNWSE, SizeWE, UpArrow, Wait, Unknown. The acronyms used with the size-type cursors are compass directions, e.g. NESW = NorthEast+SouthWest. The hand-shaped cursors (pointing and grabbing) are classified as Unknown.
+    A_DD => String                                      ; Current 2-digit day of the month (01-31). Synonymous with A_MDay.
+    A_DDD => String                                     ; Current day of the week's abbreviation in the current user's language, e.g. Sun
+    A_DDDD => String                                    ; Current day of the week's full name in the current user's language, e.g. Sunday
+    A_DefaultMouseSpeed => Integer                      ; Can be used to get or set the default mouse speed, an integer from 0 (fastest) to 100 (slowest). For details, see SetDefaultMouseSpeed.
+    A_Desktop => String                                 ; The full path and name of the folder containing the current user's desktop files. For example:
+    A_DesktopCommon => String                           ; The full path and name of the folder containing the all-users desktop files. For example:
+    A_DetectHiddenText => Integer                       ; Can be used to get or set whether to detect hidden text in a window. Possible values are 0 (disabled) and 1 (enabled). For details, see DetectHiddenText.
+    A_DetectHiddenWindows => Integer                    ; Can be used to get or set whether to detect hidden windows. Possible values are 0 (disabled) and 1 (enabled). For details, see DetectHiddenWindows.
+    A_EndChar => String                                 ; The ending character that was pressed by the user to trigger the most recent non-auto-replace hotstring. If no ending character was required (due to the * option), this variable will be blank.
+    A_EventInfo => Integer                              ; Contains additional information about the following events: Mouse wheel hotkeys (WheelDown/Up/Left/Right), OnMessage, Regular Expression Callouts.
+    A_FileEncoding => String                            ; Can be used to get or set the default encoding for various built-in functions. For details, see FileEncoding.
+    A_HotkeyInterval => Integer                         ; Can be used to get or set the length of the interval used by A_MaxHotkeysPerInterval, in milliseconds.
+    A_HotkeyModifierTimeout => Integer                  ; Can be used to get or set the timeout affecting the behavior of Send with hotkey modifiers Ctrl, Alt, Win, and Shift. For details, see A_HotkeyModifierTimeout.
+    A_Hour => String                                    ; Current 2-digit hour (00-23) in 24-hour time (for example, 17 is 5pm). To retrieve 12-hour time as well as an AM/PM indicator, follow this example: FormatTime(, "h:mm:ss tt")
+    A_IconFile => String                                ; Blank unless a custom tray icon has been specified via TraySetIcon -- in which case it is the full path and name of the icon's file.
+    A_IconHidden => Integer                             ; Can be used to get or set whether to hide the tray icon. Possible values are 0 (visible) and 1 (hidden). For details, see #NoTrayIcon.
+    A_IconNumber => Integer                             ; Blank if A_IconFile is blank. Otherwise, it's the number of the icon in A_IconFile (typically 1).
+    A_IconTip => String                                 ; Can be used to get or set the tray icon's tooltip text, which is displayed when the mouse hovers over it. If blank, the script's name is used instead.
+    A_Index => Integer                                  ; Can be used to get or set the number of the current loop iteration (a 64-bit integer). It contains 1 the first time the loop's body is executed. For the second time, it contains 2; and so on. If an inner loop is enclosed by an outer loop, the inner loop takes precedence. A_Index works inside all types of loops, but contains 0 outside of a loop. For counted loops such as Loop, changing A_Index affects the number of iterations that will be performed.
+    A_InitialWorkingDir => String                       ; The script's initial working directory, which is determined by how it was launched. For example, if it was run via shortcut -- such as on the Start Menu -- its initial working directory is determined by the "Start in" field within the shortcut's properties.
+    A_Is64bitOS => Integer                              ; Contains 1 (true) if the OS is 64-bit or 0 (false) if it is 32-bit.
+    A_IsAdmin => Integer                                ; Contains 1 if the current user has admin rights, otherwise 0.
+    A_IsCompiled => Integer                             ; Contains 1 if the script is running as a compiled EXE and 0 (which is considered false) if it is not.
+    A_IsCritical => Integer                             ; Contains 0 if Critical is off for the current thread. Otherwise it contains an integer greater than zero, namely the message-check interval being used by Critical. The current state of Critical can be saved and restored via Old_IsCritical := A_IsCritical followed later by A_IsCritical := Old_IsCritical.
+    A_IsPaused => Integer                               ; Contains 1 if the thread immediately underneath the current thread is paused, otherwise 0.
+    A_IsSuspended => Integer                            ; Contains 1 if the script is suspended, otherwise 0.
+    A_KeyDelay => Integer                               ; Can be used to get or set the delay or duration for keystrokes, in milliseconds. For details, see SetKeyDelay.
+    A_KeyDelayPlay => Integer                           ; Can be used to get or set the delay or duration for keystrokes sent via SendPlay mode, in milliseconds. For details, see SetKeyDelay.
+    A_KeyDuration => Integer                            ; Can be used to get or set the delay or duration for keystrokes, in milliseconds. For details, see SetKeyDelay.
+    A_KeyDurationPlay => Integer                        ; Can be used to get or set the delay or duration for keystrokes sent via SendPlay mode, in milliseconds. For details, see SetKeyDelay.
+    A_Language => String                                ; The system's default language, which is one of these 4-digit codes.
+    A_LastError => Integer                              ; This is usually the result from the OS's GetLastError() function after the script calls certain functions, including DllCall, Run/RunWait, File/Ini/Reg functions (where documented) and possibly others. A_LastError is a number between 0 and 4294967295 (always formatted as decimal, not hexadecimal). Zero (0) means success, but any other number means the call failed. Each number corresponds to a specific error condition. See OSError for how to get the localized error description text, or search www.microsoft.com for "system error codes" to get a list. A_LastError is a per-thread setting; that is, interruptions by other threads cannot change it.
+    A_LineFile => String                                ; The full path and name of the file to which A_LineNumber belongs. If the script was loaded from an external file, this is the same as A_ScriptFullPath unless the line belongs to one of the script's #Include files.
+    A_LineNumber => Integer                             ; The number of the currently executing line within the script (or one of its #Include files). This line number will match the one shown by ListLines; it can be useful for error reporting such as this example: MsgBox "Could not write to log file (line number " A_LineNumber ")".
+    A_ListLines => Integer                              ; Can be used to get or set whether to log lines. Possible values are 0 (disabled) and 1 (enabled). For details, see ListLines.
+    A_LoopField => String                               ; It contains the contents of the current substring (field). If an inner parsing loop is enclosed by an outer parsing loop, the innermost loop's field will take precedence.
+    A_LoopFileAttrib => String                          ; The attributes of the file currently retrieved.
+    A_LoopFileDir => String                             ; The path of the directory in which A_LoopFileName resides. If FilePattern contains a relative path rather than an absolute path, the path here will also be relative. A root directory will not contain a trailing backslash. For example: C:
+    A_LoopFileExt => String                             ; The file's extension (e.g. TXT, DOC, or EXE). The period (.) is not included.
+    A_LoopFileFullPath => String                        ; This is different than A_LoopFilePath in the following ways: 1) It always contains the absolute/complete path of the file even if FilePattern contains a relative path; 2) Any short (8.3) folder names in FilePattern itself are converted to their long names; 3) Characters in FilePattern are converted to uppercase or lowercase to match the case stored in the file system. This is useful for converting file names -- such as those passed into a script as command line parameters -- to their exact path names as shown by Explorer.
+    A_LoopFileName => String                            ; The name of the file or folder currently retrieved (without the path).
+    A_LoopFilePath => String                            ; The path and name of the file/folder currently retrieved. If FilePattern contains a relative path rather than an absolute path, the path here will also be relative. In addition, any short (8.3) folder names in FilePattern will still be short (see next item to get the long version).
+    A_LoopFileShortName => String                       ; The 8.3 short name or alternate name of the file. If the file doesn't have one (due to the long name being shorter than 8.3 or perhaps because short-name generation is disabled on an NTFS file system), A_LoopFileName will be retrieved instead.
+    A_LoopFileShortPath => String                       ; The 8.3 short path and name of the file/folder currently retrieved. For example: C:\MYDOCU~1\ADDRES~1.txt. If FilePattern contains a relative path rather than an absolute path, the path here will also be relative.
+    A_LoopFileSize => String                            ; The size in bytes of the file currently retrieved. Files larger than 4 gigabytes are also supported.
+    A_LoopFileSizeKB => String                          ; The size in Kbytes of the file currently retrieved, rounded down to the nearest integer.
+    A_LoopFileSizeMB => String                          ; The size in Mbytes of the file currently retrieved, rounded down to the nearest integer.
+    A_LoopFileTimeAccessed => String                    ; The time the file was last accessed. Format YYYYMMDDHH24MISS.
+    A_LoopFileTimeCreated => String                     ; The time the file was created. Format YYYYMMDDHH24MISS.
+    A_LoopFileTimeModified => String                    ; The time the file was last modified. Format YYYYMMDDHH24MISS.
+    A_LoopReadLine => String                            ; It contains the contents of the current line excluding the carriage return and linefeed (`r`n) that marks the end of the line.
+    A_LoopRegKey => String                              ;  full name of the key which contains the current loop item. For remote registry access, this value will not include the computer name.
+    A_LoopRegName => String                             ;  of the currently retrieved item, which can be either a value name or the name of a subkey. Value names displayed by Windows RegEdit as "(Default)" will be retrieved if a value has been assigned to them, but A_LoopRegName will be blank for them.
+    A_LoopRegTimeModified => String                     ;  time the current subkey or any of its values was last modified. Format YYYYMMDDHH24MISS. This variable will be empty if the currently retrieved item is not a subkey (i.e. A_LoopRegType is not the word KEY).
+    A_LoopRegType => String                             ;  type of the currently retrieved item, which is one of the following words: KEY (i.e. the currently retrieved item is a subkey not a value), REG_SZ, REG_EXPAND_SZ, REG_MULTI_SZ, REG_DWORD, REG_QWORD, REG_BINARY, REG_LINK, REG_RESOURCE_LIST, REG_FULL_RESOURCE_DESCRIPTOR, REG_RESOURCE_REQUIREMENTS_LIST, REG_DWORD_BIG_ENDIAN (probably rare on most Windows hardware). It will be empty if the currently retrieved item is of an unknown type.
+    A_MaxHotkeysPerInterval => Integer                  ; Can be used to get or set the maximum number of hotkeys that can be pressed within the interval defined by A_HotkeyInterval without triggering a warning dialog. For details, see A_MaxHotkeysPerInterval.
+    A_MenuMaskKey => String                             ; Controls which key is used to mask Win or Alt keyup events. For details, see A_MenuMaskKey.
+    A_Min => String                                     ; Current 2-digit minute (00-59).
+    A_MM => String                                      ; Current 2-digit month (01-12). Synonymous with A_Mon.
+    A_MMM => String                                     ; Current month's abbreviation in the current user's language, e.g. Jul
+    A_MMMM => String                                    ; Current month's full name in the current user's language, e.g. July
+    A_MouseDelay => Integer                             ; Can be used to get or set the mouse delay, in milliseconds. A_MouseDelay is for the traditional SendEvent mode, whereas A_MouseDelayPlay is for SendPlay. For details, see SetMouseDelay.
+    A_MouseDelayPlay => Integer                         ; Can be used to get or set the mouse delay, in milliseconds. A_MouseDelay is for the traditional SendEvent mode, whereas A_MouseDelayPlay is for SendPlay. For details, see SetMouseDelay.
+    A_MSec => String                                    ; Current 3-digit millisecond (000-999). To remove the leading zeros, follow this example: Milliseconds := A_MSec + 0.
+    A_MyDocuments => String                             ; The full path and name of the current user's "My Documents" folder. Unlike most of the similar variables, if the folder is the root of a drive, the final backslash is not included (e.g. it would contain M: rather than M:\). For example:
+    A_Now => String                                     ; The current local time in YYYYMMDDHH24MISS format.
+    A_NowUTC => String                                  ; The current Coordinated Universal Time (UTC) in YYYYMMDDHH24MISS format. UTC is essentially the same as Greenwich Mean Time (GMT).
+    A_OSVersion => String                               ; The version number of the operating system, in the format "major.minor.build". For example, Windows 7 SP1 is 6.1.7601.
+    A_PriorHotkey => String                             ; Same as above except for the previous hotkey. It will be blank if none.
+    A_PriorKey => String                                ; The name of the last key which was pressed prior to the most recent key-press or key-release, or blank if no applicable key-press can be found in the key history. All input generated by AutoHotkey scripts is excluded. For this variable to be of use, the keyboard or mouse hook must be installed and key history must be enabled.
+    A_ProgramFiles => String                            ; The Program Files directory (e.g. C:\Program Files or C:\Program Files (x86)). This is usually the same as the ProgramFiles environment variable.
+    A_Programs => String                                ; The full path and name of the Programs folder in the current user's Start Menu. For example:
+    A_ProgramsCommon => String                          ; The full path and name of the Programs folder in the all-users Start Menu. For example:
+    A_PtrSize => Integer                                ; Contains the size of a pointer, in bytes. This is either 4 (32-bit) or 8 (64-bit), depending on what type of executable (EXE) is running the script.
+    A_RegView => String                                 ; Can be used to get or set the registry view. Possible values are 32, 64 and Default. For details, see SetRegView.
+    A_ScreenDPI => Integer                              ; Number of pixels per logical inch along the screen width. In a system with multiple display monitors, this value is the same for all monitors. On most systems this is 96; it depends on the system's text size (DPI) setting. See also the GUI's -DPIScale option.
+    A_ScreenHeight => Integer                           ; The height of the primary monitor, in pixels.
+    A_ScreenWidth => Integer                            ; The width of the primary monitor, in pixels.
+    A_ScriptDir => String                               ; The full path of the directory where the current script is located. The final backslash is omitted (even for root directories).
+    A_ScriptFullPath => String                          ; The full path of the current script, e.g. C:\Scripts\My Script.ahk
+    A_ScriptHwnd => Integer                             ; The unique ID (HWND/handle) of the script's hidden main window.
+    A_ScriptName => String                              ; Can be used to get or set the default title for MsgBox, InputBox, FileSelect, DirSelect and Gui. If not set by the script, it defaults to the file name of the current script, without its path, e.g. MyScript.ahk.
+    A_Sec => String                                     ; Current 2-digit second (00-59).
+    A_SendLevel => Integer                              ; Can be used to get or set the send level, an integer from 0 to 100. For details, see SendLevel.
+    A_SendMode => String                                ; Can be used to get or set the send mode. Possible values are Event, Input, Play, and InputThenPlay. For details, see SendMode.
+    A_Space => String                                   ; Contains a single space character.
+    A_StartMenu => String                               ; The full path and name of the current user's Start Menu folder. For example:
+    A_StartMenuCommon => String                         ; The full path and name of the all-users Start Menu folder. For example:
+    A_Startup => String                                 ; The full path and name of the Startup folder in the current user's Start Menu. For example:
+    A_StartupCommon => String                           ; The full path and name of the Startup folder in the all-users Start Menu. For example:
+    A_StoreCapsLockMode => Integer                      ; Can be used to get or set whether to restore the state of CapsLock after a Send. Possible values are 0 (disabled) and 1 (enabled). For details, see SetStoreCapsLockMode.
+    A_Tab => String                                     ; Contains a single tab character.
+    A_Temp => String                                    ; The full path and name of the folder designated to hold temporary files. It is retrieved from one of the following locations (in order): 1) the environment variables TMP, TEMP, or USERPROFILE; 2) the Windows directory. For example:
+    A_ThisFunc => String                                ; The name of the user-defined function that is currently executing (blank if none); for example: MyFunction. See also: Name property (Func)
+    A_ThisHotkey => String                              ; The most recently executed hotkey or non-auto-replace hotstring (blank if none), e.g. #z. This value will change if the current thread is interrupted by another hotkey or hotstring, so it is generally better to use the parameter ThisHotkey when available.
+    A_TickCount => Integer                              ; The number of milliseconds that have elapsed since the system was started, up to 49.7 days. By storing A_TickCount in a variable, elapsed time can later be measured by subtracting that variable from the latest A_TickCount value. For example:
+    A_TimeIdle => Integer                               ; The number of milliseconds that have elapsed since the system last received keyboard, mouse, or other input. This is useful for determining whether the user is away. Physical input from the user as well as artificial input generated by any program or script (such as the Send or MouseMove functions) will reset this value back to zero. Since this value tends to increase by increments of 10, do not check whether it is equal to another value. Instead, check whether it is greater or less than another value. For example:
+    A_TimeIdleKeyboard => Integer                       ; If the keyboard hook is installed, this is the number of milliseconds that have elapsed since the system last received physical keyboard input. Otherwise, this variable is equivalent to A_TimeIdle.
+    A_TimeIdleMouse => Integer                          ; If the mouse hook is installed, this is the number of milliseconds that have elapsed since the system last received physical mouse input. Otherwise, this variable is equivalent to A_TimeIdle.
+    A_TimeIdlePhysical => Integer                       ; Similar to above but ignores artificial keystrokes and/or mouse clicks whenever the corresponding hook (keyboard or mouse) is installed; that is, it responds only to physical events. (This prevents simulated keystrokes and mouse clicks from falsely indicating that a user is present.) If neither hook is installed, this variable is equivalent to A_TimeIdle. If only one hook is installed, only its type of physical input affects A_TimeIdlePhysical (the other/non-installed hook's input, both physical and artificial, has no effect).
+    A_TimeSincePriorHotkey => String                    ; The number of milliseconds that have elapsed since A_PriorHotkey was pressed. It will be blank whenever A_PriorHotkey is blank.
+    A_TimeSinceThisHotkey => String                     ; The number of milliseconds that have elapsed since A_ThisHotkey was pressed. It will be blank whenever A_ThisHotkey is blank.
+    A_TitleMatchMode => Integer                         ; Can be used to get or set the title match mode. Possible values are 1, 2, 3, and RegEx. For details, see SetTitleMatchMode.
+    A_TitleMatchModeSpeed => String                     ; Can be used to get or set the title match speed. Possible values are Fast and Slow. For details, see SetTitleMatchMode.
+    A_TrayMenu => Menu                                  ; Returns a Menu object which can be used to modify or display the tray menu.
+    A_UserName => String                                ; The logon name of the user who launched this script.
+    A_WDay => String                                    ; Current 1-digit day of the week (1-7). 1 is Sunday in all locales.
+    A_WinDelay => Integer                               ; Can be used to get or set the delay for windowing functions, in milliseconds. For details, see SetWinDelay.
+    A_WinDir => String                                  ; The Windows directory. For example: C:\Windows
+    A_WorkingDir => String                              ; Can be used to get or set the script's current working directory, which is where files will be accessed by default. The final backslash is not included unless it is the root directory. Two examples: C:\ and C:\My Documents.
+    A_YDay => String                                    ; Current day of the year (1-366). The value is not zero-padded, e.g. 9 is retrieved, not 009. To retrieve a zero-padded value, use the following: FormatTime(, "YDay0").
+    A_YWeek => String                                   ; Current year and week number (e.g. 200453) according to ISO 8601. To separate the year from the week, use Year := SubStr(A_YWeek, 1, 4) and Week := SubStr(A_YWeek, -2). Precise definition of A_YWeek: If the week containing January 1st has four or more days in the new year, it is considered week 1. Otherwise, it is the last week of the previous year, and the next week is week 1.
+    A_YYYY => String                                    ; Current 4-digit year (e.g. 2004). Synonymous with A_Year.
+    False => Integer                                    ; Contain 0. Can be used to make a script more readable. For details, see Boolean Values.
+    True => Integer                                     ; Contain 1. Can be used to make a script more readable. For details, see Boolean Values.
+
+
+;;Operators
+    (Expression)                                        ; Any sub-expression enclosed in parentheses. For example, (3 + 2) * 2 forces 3 + 2 to be evaluated first. For a multi-statement expression, the result of the last statement is returned. For example, (a := 1, b := 2, c := 3) returns 3.
+    Fn()                                                ; Function call. There must be no space between the function name or expression and the open parenthesis which begins the parameter list. For details, see Function Calls.
+    Fn(Params*)                                         ; Variadic function call. Params is an enumerable object (an object with an __Enum method), such as an Array containing parameter values.
+    x[y]                                                ; Item access. Get or set the __Item property (or default property) of object x with the parameter y (or multiple parameters in place of y). This typically corresponds to an array element or item within a collection, where y is the item's index or key. The item can be assigned a value by using any assignment operator immediately after the closing bracket. For example, x[y] := z.
+    [1, 2]                                              ; Array literal. If the open-bracket is not preceded by a value (or a sub-expression which yields a value), it is interpreted as the beginning of an array literal. For example, [a, b, c] is equivalent to Array(a, b, c) (a, b and c are variables).
+    {a:1, b:2}                                          ; Object literal. Create an Object. Each pair consists of a literal property name a and a property value expression b. For example, x := {a: b} is equivalent to x := Object(), x.a := b. Base may be set within the object literal, but all other properties are set as own value properties, potentially overriding properties inherited from the base object.
+    %Expression%                                        ; Dereference or name substitution.
+    x.y                                                 ; Member access. Get or set a value or call a method of object x, where y is a literal name and z is an expression which evaluates to a name. See object syntax.
+    x.%z%                                               ; Member access. Get or set a value or call a method of object x, where y is a literal name and z is an expression which evaluates to a name. See object syntax.
+    var?                                                ; Maybe. Permits the variable to be unset. This is valid only when passing a variable to an optional parameter, array element or object literal; or on the right-hand side of a direct assignment. The question mark must be followed by one of the following symbols (ignoring whitespace): )]},:. The variable may be passed conditionally via the ternary operator or on the right-hand side of AND/OR.
+    ++                                                  ; Pre- and post-increment. Adds 1 to a variable. The operator may appear either before or after the variable's name. If it appears before the name, the operation is performed and its result is used by the next operation (the result is a variable reference in this case). For example, Var := ++X increments X and then assigns its value to Var. Conversely, if the operator appears after the variable's name, the result is the value of X prior to performing the operation. For example, Var := X++ increments X but Var receives the value X had before it was incremented.
+    --                                                  ; Pre- and post-decrement. Subtracts 1 from a variable. The operator may appear either before or after the variable's name. If it appears before the name, the operation is performed and its result is used by the next operation (the result is a variable reference in this case). For example, Var := ++X increments X and then assigns its value to Var. Conversely, if the operator appears after the variable's name, the result is the value of X prior to performing the operation. For example, Var := X++ increments X but Var receives the value X had before it was incremented.
+    **                                                  ; Power. Example usage: base**exponent. Both base and exponent may contain a decimal point. If exponent is negative, the result will be formatted as a floating point number even if base and exponent are both integers. Since ** is of higher precedence than unary minus, -2**2 is evaluated like -(2**2) and so yields -4. Thus, to raise a literal negative number to a power, enclose it in parentheses such as (-2)**2.
+    -                                                   ; Unary minus (-): Inverts the sign of its operand.
+    +                                                   ; Unary plus (+): +N is equivalent to -(-N). This has no effect when applied to a pure number, but can be used to convert numeric strings to pure numbers.
+    !                                                   ; Logical-not (!): If the operand is blank or 0, the result of applying logical-not is 1, which means "true". Otherwise, the result is 0 (false). For example: !x or !(y and z). Note: The word NOT is synonymous with ! except that ! has a higher precedence. Consecutive unary operators such as !!Var are allowed because they are evaluated in right-to-left order.
+    ~                                                   ; Bitwise-not (~): This inverts each bit of its operand. As 64-bit signed integers are used, a positive input value will always give a negative result and vice versa. For example, ~0xf0f evaluates to -0xf10 (-3856), which is binary equivalent to 0xfffffffffffff0f0. If an unsigned 32-bit value is intended, the result can be truncated with result & 0xffffffff. If the operand is a floating point value, a TypeError is thrown.
+    &                                                   ; Reference (&): Creates a VarRef, which is a value representing a reference to a variable. A VarRef can then be used to indirectly access the target variable. For example, ref := &target followed by %ref% := 1 would assign the value 1 to target. The VarRef would typically be passed to a function, but could be stored in an array or property. See also: Dereference, ByRef.
+    *                                                   ; Multiply (*): The result is an integer if both inputs are integers; otherwise, it is a floating point number.
+    /                                                   ; True divide (/): True division yields a floating point result even when both inputs are integers. For example, 3/2 yields 1.5 rather than 1, and 4/2 yields 2.0 rather than 2.
+    //                                                  ; Integer divide (//): The double-slash operator uses high-performance integer division. For example, 5//3 is 1 and 5//-3 is -1. If either of the inputs is in floating point format, a TypeError is thrown. For modulo, see Mod.
+    +                                                   ; Add (+)
+    -                                                   ; Subtract (-)
+    <<                                                  ; Bit shift left (<<). Example usage: Value1 << Value2. This is equivalent to multiplying Value1 by "2 to the Value2th power".
+    >>                                                  ; Arithmetic bit shift right (>>). Example usage: Value1 >> Value2. This is equivalent to dividing Value1 by "2 to the Value2th power" and rounding the result to the nearest integer leftward on the number line; for example, -3>>1 is -2.
+    >>>                                                 ; Logical bit shift right (>>>). Example usage: Value1 >>> Value2. Unlike arithmetic bit shift right, this does not preserve the sign of the number. For example, -1 has the same bit representation as the unsigned 64-bit integer 0xffffffffffffffff, therefore -1 >>> 1 is 0x7fffffffffffffff.
+    &                                                   ; Bitwise-and (&)
+    ^                                                   ; Bitwise-exclusive-or (^) 
+    |                                                   ; Bitwise-or (|)
+    .                                                   ; Concatenate. A period (dot) with at least one space or tab on each side is used to combine two items into a single string. You may also omit the period to achieve the same result (except where ambiguous such as x -y, or when the item on the right side has a leading ++ or --). When the dot is omitted, there must be at least one space or tab between the items to be merged.
+    ~=                                                  ; Shorthand for RegExMatch. For example, the result of "abc123" ~= "\d" is 4 (the position of the first numeric character).
+    >                                                   ; Greater (>)
+    <                                                   ; Less (<)
+    >=                                                  ; Greater-or-equal
+    <=                                                  ; Less-or-equal
+    =                                                   ; Case-insensitive equal (=)
+    ==                                                  ; Case-sensitive equal
+    !=                                                  ; Not-equal
+    !==                                                 ; Case-sensitive not-equal
+    IS                                                  ; (Value IS Class) yields true (1) if Value is an instance of Class or false (0) otherwise. Class must be an Object with a Prototype own property, but typically the property is defined implicitly by a class definition.
+    IN                                                  ; Keyword used with the for-loop to enumerate an object. For key, value IN object
+    CONTAINS                                            ; contains is reserved for future use.
+    NOT                                                 ; Logical-NOT. Except for its lower precedence, this is the same as the ! operator. For example, not (x = 3 or y = 3) is the same as !(x = 3 or y = 3).
+    AND                                                 ; Logical-AND. For example: (x > 3 AND x < 10)
+    &&                                                  ; Logical-AND. For example: (x > 3 && x < 10)
+    OR                                                  ; Logical-OR. For example: (x <= 3 OR x >= 10).
+    ||                                                  ; Logical-OR. For example: (x <= 3 || x >= 10).
+    ??                                                  ; Or maybe. Otherwise known as the coalescing operator. If the left operand (which must be a variable) has a value, it becomes the result and the right branch is skipped. Otherwise, the right operand becomes the result. In other words, A ?? B behaves like A || B (logical-OR) except that the condition is IsSet(A).
+    ?:                                                  ; Ternary operator. This operator is a shorthand replacement for the if-else statement. It evaluates the condition on its left side to determine which of its two branches should become its final result. For example, var := x>y ? 2 : 3 stores 2 in Var if x is greater than y; otherwise it stores 3. To enhance performance, only the winning branch is evaluated (see short-circuit evaluation).
+    :=                                                  ; Assignment operator. Performs the operation using the original variable and the contents on the right, then assigns the result back to the original variable.
+    +=                                                  ; Add-assign operator. Performs the operation using the original variable and the contents on the right, then assigns the result back to the original variable.
+    -=                                                  ; Minus-assign operator. Performs the operation using the original variable and the contents on the right, then assigns the result back to the original variable.
+    *=                                                  ; Multiply-assign operator. Performs the operation using the original variable and the contents on the right, then assigns the result back to the original variable.
+    /=                                                  ; True-divide-assign operator. Performs the operation using the original variable and the contents on the right, then assigns the result back to the original variable.
+    //=                                                 ; Integer-divide-assign operator. Performs the operation using the original variable and the contents on the right, then assigns the result back to the original variable.
+    .=                                                  ; Concatinate-assign operator. Performs the operation using the original variable and the contents on the right, then assigns the result back to the original variable.
+    |=                                                  ; Bitwise-or-assign operator. Performs the operation using the original variable and the contents on the right, then assigns the result back to the original variable.
+    &=                                                  ; Bitwise-and-assign operator. Performs the operation using the original variable and the contents on the right, then assigns the result back to the original variable.
+    ^=                                                  ; Bitwise-xor-assign operator. Performs the operation using the original variable and the contents on the right, then assigns the result back to the original variable.
+    >>=                                                 ; Bitshift-right-assign operator. Performs the operation using the original variable and the contents on the right, then assigns the result back to the original variable.
+    <<=                                                 ; Bitshift-left-assign operator. Performs the operation using the original variable and the contents on the right, then assigns the result back to the original variable.
+    >>>=                                                ; Logical-bitshift-right-assign operator. Performs the operation using the original variable and the contents on the right, then assigns the result back to the original variable.
+    () => Expression                                    ; Fat arrow function. Defines a simple function and returns a Func or Closure object. Write the function's parameter list (optionally preceded by a function name) to the left of the operator. When the function is called (via the returned reference), it evaluates the sub-expression expr and returns the result.
+    ,                                                   ; Comma (multi-statement). Commas may be used to write multiple sub-expressions into a single statement. This is most commonly used to group together multiple assignments or function calls. Commas are also used as delimiters between function parameters.
